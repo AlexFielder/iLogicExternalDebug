@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Module"
+    targetNamespace="http://tempuri.org/Module.xs"
+    elementFormDefault="qualified"
+    xmlns="http://tempuri.org/Module.xs"
+    xmlns:mstns="http://tempuri.org/Module.xs"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+  <xs:element name="StandardModule" type="ModuleType"/>
+  
+  <xs:complexType name="ModuleType" >
+    <xs:sequence>
+      <xs:element name="Elements">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Element" 
+                        type="FModuleElement" 
+                        minOccurs="0" 
+                        maxOccurs="unbounded" />
+                      </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="Filters">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Filter"
+                         type="FilterType"
+                         minOccurs="0"
+                         maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="InternalHardware">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Grating"
+                         type="MiscSystemType"
+                         minOccurs="0"
+                         maxOccurs="unbounded"
+                         default="0"/>
+            <xs:element name="DripPan"
+                         type="MiscSystemType"
+                         minOccurs="0"
+                         maxOccurs="unbounded" 
+                         default="0"/>
+            <xs:element name="Gasket"
+                         type="MiscSystemType"
+                         minOccurs="0"
+                         maxOccurs="unbounded" 
+                         default="0"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="PreFilterClamp" type="MiscSystemType" minOccurs="28" maxOccurs="75" />
+      <xs:element name="IntermediateFilterClamp" type="MiscSystemType" minOccurs="28" maxOccurs="75" />
+      <xs:element name="GuardFilterClamp" type="MiscSystemType" minOccurs="28" maxOccurs="75" />
+      <xs:element name="LiftingLugs" type="MiscSystemType" minOccurs="4" maxOccurs="unbounded" />
+      <xs:element name="Ladders" type="MiscSystemType" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="SafetyGates" type="MiscSystemType" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="AssemblyFilename" default="Something.iam" />
+    <xs:attribute type="xs:integer" name="ModuleNumFiltersHigh" default="4" />
+    <xs:attribute type="xs:integer" name="ModuleNumFiltersWide" default="7" />
+    <xs:attribute type="xs:boolean" name="IncludesVerticalSplit" default="false" />
+    <xs:attribute type="xs:boolean" name="IncludesHorizontalSplit" default="false" />
+    <xs:attribute type="xs:boolean" name="DrainPanRequired" default="false" />
+    <xs:attribute type="xs:boolean" name="IsUpperModule" default ="false"/>
+    <xs:attribute type="xs:boolean" name="IsLowerModule" default ="false"/>
+  </xs:complexType>
+  
+  <xs:complexType name="FModuleElement">
+    <xs:attribute type="xs:string" name="AssemblyFilename" default="Something.iam" />
+    <xs:attribute type="xs:string" name="ElementID"/>
+    <xs:attribute type="xs:string" name="ParentModuleID" />
+    <xs:attribute type="xs:boolean" name="ElementIsDisabled" default="false" />
+    <xs:attribute type="xs:boolean" name="ElementBracingLeftFront" />
+    <xs:attribute type="xs:boolean" name="ElementBracingLeftRear" />
+    <xs:attribute type="xs:boolean" name="ElementBracingRightFront" />
+    <xs:attribute type="xs:boolean" name="ElementBracingRightRear" />
+    <xs:attribute type="xs:integer" name="ElementWidth" />
+  </xs:complexType>
+  
+  <xs:complexType name="MiscSystemType" mixed="1">
+    <xs:attribute type="xs:string" name="AssemblyFilename" default="Something.iam" />
+    <xs:attribute type="xs:string" name="SystemType" />
+    <xs:attribute type="xs:string" name="SystemVersion" />
+  </xs:complexType>
+  
+  <xs:complexType name="FilterType">
+    <xs:attribute type="xs:string" name="AssemblyFilename" default="Something.iam" />
+    <xs:attribute type="xs:string" name="Brand" default="CompanyName" />
+    <xs:attribute type="xs:double" name="FilterWidth" default="610" />
+    <xs:attribute type="xs:double" name="FilterHeight" default="610" />
+    <xs:attribute type="xs:double" name="FilterLength" default="1337" />
+  </xs:complexType>
+</xs:schema>

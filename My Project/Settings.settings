@@ -1,7 +1,12 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" UseMySettingsClassName="true">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="My" GeneratedClassName="MySettings" UseMySettingsClassName="true">
+  <Profiles />
+  <Settings>
+    <Setting Name="XSDCommandStringFilterElements" Type="System.String" Scope="User">
+      <Value Profile="(Default)">"C:\program files (x86)\xsd2code\xsd2code.exe" "C:\Users\alex.fielder\Dropbox\iLogicMk3\iLogicExternalDebug\FilterElements.xsd" FilterElements.vb /l VB /is+ /gbc+ /ggbc+ /xa+ /sc+</Value>
+    </Setting>
+    <Setting Name="XSDCommandStringModule" Type="System.String" Scope="User">
+      <Value Profile="(Default)">"C:\program files (x86)\xsd2code\xsd2code.exe" "C:\Users\alex.fielder\Dropbox\iLogicMk3\iLogicExternalDebug\Module.xsd" Module.vb /l VB /is+ /gbc+ /ggbc+ /xa+ /sc+</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>

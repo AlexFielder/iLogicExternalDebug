@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="FilterElements"
+    targetNamespace="http://tempuri.org/FilterElements.xsd"
+    elementFormDefault="qualified"
+    xmlns="http://tempuri.org/FilterElements.xsd"
+    xmlns:mstns="http://tempuri.org/FilterElements.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+>
+  <xs:element name="StandardElements">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="FilterElement" 
+                    type="FilterElementType"
+                    minOccurs="0"
+                    maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="FilterElementType">
+    <xs:attribute type="xs:string" name="AssemblyFilename" default="Something.iam" />
+    <xs:attribute type="xs:string" name="ElementID"/>
+    <xs:attribute type="xs:string" name="ParentModuleID" />
+    <xs:attribute type="xs:boolean" name="ElementIsDisabled" default="false" />
+    <xs:attribute type="xs:boolean" name="ElementBracingLeftFront" />
+    <xs:attribute type="xs:boolean" name="ElementBracingLeftRear" />
+    <xs:attribute type="xs:boolean" name="ElementBracingRightFront" />
+    <xs:attribute type="xs:boolean" name="ElementBracingRightRear" />
+    <xs:attribute type="xs:integer" name="ElementNumFiltersWidth" />
+  </xs:complexType>
+</xs:schema>
