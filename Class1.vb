@@ -1,3 +1,6 @@
-﻿Public Class Class1
+﻿Imports System.Windows.Forms
+Imports Inventor
+
+Public Class ExtClass
 
 End Class
