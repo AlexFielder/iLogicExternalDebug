@@ -1,5 +1,6 @@
 ﻿Imports System.Windows.Forms
 Imports Inventor
+Imports Autodesk.iLogic.Interfaces
 
 Public Class ExtClass
 #Region "Properties"
@@ -25,21 +26,21 @@ Public Class ExtClass
         End Set
     End Property
 
-    Private m_DocToUpdate As Document
-    Public Property DocToUpdate() As Document
+    Private m_DocToUpdate As ICadDoc
+    Public Property DocToUpdate() As ICadDoc
         Get
             Return m_DocToUpdate
         End Get
-        Set(ByVal value As Document)
+        Set(ByVal value As ICadDoc)
             m_DocToUpdate = value
         End Set
     End Property
     Public Sub Update()
-        NumFiltersWide = Parameters.GetParameter(DocToUpdate, "NumFiltersWide")
-        NumFiltersHigh = Parameters.GetParameter(DocToUpdate, "NumFiltersHigh")
-        NumFiltrationStages = Parameters.GetParameter(DocToUpdate, "FilterHouseNumFiltrationStages")
+        NumFiltersWide = Parameters.GetParameter(DocToUpdate.Document, "NumFiltersWide")
+        NumFiltersHigh = Parameters.GetParameter(DocToUpdate.Document, "NumFiltersHigh")
+        NumFiltrationStages = Parameters.GetParameter(DocToUpdate.Document, "FilterHouseNumFiltrationStages")
 
-        Select Case iProperties.SetorCreateCustomiProperty(DocToUpdate, "BasePartNumber")
+        Select Case iProperties.SetorCreateCustomiProperty(DocToUpdate.Document, "BasePartNumber")
             Case "Master-FrontUpperFlange"
                 UpdateFrontUpperFlange()
             Case "Master-FrontBottomFlange"
@@ -52,6 +53,9 @@ Public Class ExtClass
                 UpdateRearUpperFlange()
             Case "Master-InterUpperFlange"
                 UpdateInterUpperFlange()
+
+            Case "FilterModuleMaster" ' our master part file so this better not break anything!
+                UpdateFilterModuleMaster()
             Case "Add more as required"
 
             Case Else
@@ -65,15 +69,12 @@ Public Class ExtClass
     Public NumFiltersHigh As Inventor.Parameter = Nothing
     Public NumFiltrationStages As Inventor.Parameter = Nothing
 
-    'Private m_StandardElements As List(Of FilterElements)
-    'Public Property StandardElements() As List(Of FilterElements)
-    '    Get
-    '        Return m_StandardElements
-    '    End Get
-    '    Set(ByVal value As List(Of FilterElements))
-    '        m_StandardElements = value
-    '    End Set
-    'End Property
+    Sub UpdateFilterModuleMaster()
+        'MessageBox.Show("Hello World")
+        UpdateKeyParameters()
+
+    End Sub
+
     Sub UpdateFrontUpperFlange()
         'MessageBox.Show("Hello World")
         UpdateKeyParameters()
@@ -81,52 +82,79 @@ Public Class ExtClass
     End Sub
 
     Private Sub UpdateKeyParameters()
-        Dim Element1NumFilters As Parameter = Parameters.GetParameter(DocToUpdate, "Element1NumFilters")
-        Dim Element2NumFilters As Parameter = Parameters.GetParameter(DocToUpdate, "Element2NumFilters")
-        Dim Element3NumFilters As Parameter = Parameters.GetParameter(DocToUpdate, "Element3NumFilters")
-        Dim Element4NumFilters As Parameter = Parameters.GetParameter(DocToUpdate, "Element4NumFilters")
-        Select Case NumFiltersWide.Value
-            Case 7
-                Element1NumFilters.Value = 4
-                Element2NumFilters.Value = 3
-            Case 8
-                Element1NumFilters.Value = 4
-                Element2NumFilters.Value = 4
-            Case 9
-                Element1NumFilters.Value = 3
-                Element2NumFilters.Value = 3
-                Element3NumFilters.Value = 3
-            Case 10
-                Element1NumFilters.Value = 3
-                Element2NumFilters.Value = 4
-                Element3NumFilters.Value = 3
-            Case 11
-                Element1NumFilters.Value = 4
-                Element2NumFilters.Value = 3
-                Element3NumFilters.Value = 4
-            Case 12
-                Element1NumFilters.Value = 4
-                Element2NumFilters.Value = 4
-                Element3NumFilters.Value = 4
-            Case 13
-                Element1NumFilters.Value = 3
-                Element2NumFilters.Value = 3
-                Element3NumFilters.Value = 4
-                Element4NumFilters.Value = 3
-            Case 14
-                Element1NumFilters.Value = 3
-                Element2NumFilters.Value = 4
-                Element3NumFilters.Value = 4
-                Element4NumFilters.Value = 3
-            Case 15
-                Element1NumFilters.Value = 4
-                Element2NumFilters.Value = 3
-                Element3NumFilters.Value = 4
-                Element4NumFilters.Value = 4
+        If TypeOf DocToUpdate.Document Is PartDocument Then
+            Dim derivedpartcheck As PartDocument = DocToUpdate.Document
+            If derivedpartcheck.ComponentDefinition.ReferenceComponents.DerivedPartComponents.Count = 0 Then
+                Select Case NumFiltersWide.Value
+                    Case 7
+                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "2 ul")
+                    Case 8
+                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "2 ul")
+                    Case 9
+                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
+                    Case 10
+                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
+                    Case 11
+                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
+                    Case 12
+                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
+                    Case 13
+                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "4 ul")
+                    Case 14
+                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "4 ul")
+                    Case 15
+                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "4 ul")
+                End Select
+            Else
+                Dim Element1NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "Element1NumFilters")
+                Dim Element2NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "Element2NumFilters")
+                Dim Element3NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "Element3NumFilters")
+                Dim Element4NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "Element4NumFilters")
+                Select Case NumFiltersWide.Value
+                    Case 7
+                        Element1NumFilters.Value = 4
+                        Element2NumFilters.Value = 3
+                    Case 8
+                        Element1NumFilters.Value = 4
+                        Element2NumFilters.Value = 4
+                    Case 9
+                        Element1NumFilters.Value = 3
+                        Element2NumFilters.Value = 3
+                        Element3NumFilters.Value = 3
+                    Case 10
+                        Element1NumFilters.Value = 3
+                        Element2NumFilters.Value = 4
+                        Element3NumFilters.Value = 3
+                    Case 11
+                        Element1NumFilters.Value = 4
+                        Element2NumFilters.Value = 3
+                        Element3NumFilters.Value = 4
+                    Case 12
+                        Element1NumFilters.Value = 4
+                        Element2NumFilters.Value = 4
+                        Element3NumFilters.Value = 4
+                    Case 13
+                        Element1NumFilters.Value = 3
+                        Element2NumFilters.Value = 3
+                        Element3NumFilters.Value = 4
+                        Element4NumFilters.Value = 3
+                    Case 14
+                        Element1NumFilters.Value = 3
+                        Element2NumFilters.Value = 4
+                        Element3NumFilters.Value = 4
+                        Element4NumFilters.Value = 3
+                    Case 15
+                        Element1NumFilters.Value = 4
+                        Element2NumFilters.Value = 3
+                        Element3NumFilters.Value = 4
+                        Element4NumFilters.Value = 4
 
-            Case Else
+                    Case Else
 
-        End Select
+                End Select
+            End If
+        End If
+
     End Sub
 
     Sub UpdateFrontBottomFlange()
