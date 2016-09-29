@@ -71,17 +71,56 @@ Public Class ExtClass
 
     Sub UpdateFilterModuleMaster()
         'MessageBox.Show("Hello World")
-        UpdateKeyParameters()
+        UpdateKeyWidthParameters()
 
     End Sub
 
     Sub UpdateFrontUpperFlange()
         'MessageBox.Show("Hello World")
-        UpdateKeyParameters()
-
+        UpdateKeyWidthParameters()
+        'need to include different offset as driven by GEK373 hole sketch blocks
+        If Parameters.GetParameter(DocToUpdate.Document, "Element1NumFilters").Value = 3 Then
+            Parameters.SetParameter(DocToUpdate.Document, "Element1NumHoles", "10")
+            Parameters.SetParameter(DocToUpdate.Document, "Element1HoleOffset", "188.75 mm")
+            Parameters.SetParameter(DocToUpdate.Document, "Element1PatternNumSlots", "5")
+        Else
+            Parameters.SetParameter(DocToUpdate.Document, "Element1NumHoles", "14")
+            Parameters.SetParameter(DocToUpdate.Document, "Element1HoleOffset", "193.75 mm")
+            Parameters.SetParameter(DocToUpdate.Document, "Element1PatternNumSlots", "8")
+        End If
+        If Parameters.GetParameter(DocToUpdate.Document, "Element2NumFilters").Value = 3 Then
+            Parameters.SetParameter(DocToUpdate.Document, "Element2NumHoles", "10")
+            Parameters.SetParameter(DocToUpdate.Document, "Element2HoleOffset", "145.00 mm")
+            Parameters.SetParameter(DocToUpdate.Document, "Element2PatternNumSlots", "5")
+        Else
+            Parameters.SetParameter(DocToUpdate.Document, "Element2NumHoles", "14")
+            Parameters.SetParameter(DocToUpdate.Document, "Element2HoleOffset", "150.00 mm")
+            Parameters.SetParameter(DocToUpdate.Document, "Element2PatternNumSlots", "8")
+        End If
+        If Parameters.GetParameter(DocToUpdate.Document, "Element3NumFilters").Value = 3 Then
+            Parameters.SetParameter(DocToUpdate.Document, "Element3NumHoles", "10")
+            Parameters.SetParameter(DocToUpdate.Document, "Element3HoleOffset", "188.75 mm")
+            Parameters.SetParameter(DocToUpdate.Document, "Element3PatternNumSlots", "5")
+        Else
+            Parameters.SetParameter(DocToUpdate.Document, "Element3NumHoles", "14")
+            Parameters.SetParameter(DocToUpdate.Document, "Element3HoleOffset", "150.00 mm")
+            Parameters.SetParameter(DocToUpdate.Document, "Element3PatternNumSlots", "8")
+        End If
+        If Parameters.GetParameter(DocToUpdate.Document, "Element4NumFilters").Value = 3 Then
+            Parameters.SetParameter(DocToUpdate.Document, "Element4NumHoles", "10")
+            Parameters.SetParameter(DocToUpdate.Document, "Element4HoleOffset", "188.75 mm")
+            Parameters.SetParameter(DocToUpdate.Document, "Element4PatternNumSlots", "5")
+        Else
+            Parameters.SetParameter(DocToUpdate.Document, "Element4NumHoles", "14")
+            Parameters.SetParameter(DocToUpdate.Document, "Element4HoleOffset", "193.75 mm")
+            Parameters.SetParameter(DocToUpdate.Document, "Element4PatternNumSlots", "8")
+        End If
     End Sub
 
-    Private Sub UpdateKeyParameters()
+    ''' <summary>
+    ''' Based in part on this post: http://forums.autodesk.com/t5/inventor-customization/check-if-it-is-derived-part-in-vba/td-p/5147080
+    ''' </summary>
+    Private Sub UpdateKeyWidthParameters()
         If TypeOf DocToUpdate.Document Is PartDocument Then
             Dim derivedpartcheck As PartDocument = DocToUpdate.Document
             If derivedpartcheck.ComponentDefinition.ReferenceComponents.DerivedPartComponents.Count = 0 Then
@@ -110,6 +149,7 @@ Public Class ExtClass
                 Dim Element2NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "Element2NumFilters")
                 Dim Element3NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "Element3NumFilters")
                 Dim Element4NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "Element4NumFilters")
+
                 Select Case NumFiltersWide.Value
                     Case 7
                         Element1NumFilters.Value = 4
@@ -158,21 +198,9 @@ Public Class ExtClass
     End Sub
 
     Sub UpdateFrontBottomFlange()
-        Select Case NumFiltersWide.Value
-            Case 7
+        UpdateKeyWidthParameters()
+        'need to add any width-specific parameter changes here.
 
-            Case 8
-            Case 9
-            Case 10
-            Case 11
-            Case 12
-            Case 13
-            Case 14
-            Case 15
-
-            Case Else
-
-        End Select
     End Sub
 
 
