@@ -75,48 +75,6 @@ Public Class ExtClass
 
     End Sub
 
-    Sub UpdateFrontUpperFlange()
-        'MessageBox.Show("Hello World")
-        UpdateKeyWidthParameters()
-        'need to include different offset as driven by GEK373 hole sketch blocks
-        If Parameters.GetParameter(DocToUpdate.Document, "Element1NumFilters").Value = 3 Then
-            Parameters.SetParameter(DocToUpdate.Document, "Element1NumHoles", "10")
-            Parameters.SetParameter(DocToUpdate.Document, "Element1HoleOffset", "188.75 mm")
-            Parameters.SetParameter(DocToUpdate.Document, "Element1PatternNumSlots", "5")
-        Else
-            Parameters.SetParameter(DocToUpdate.Document, "Element1NumHoles", "14")
-            Parameters.SetParameter(DocToUpdate.Document, "Element1HoleOffset", "193.75 mm")
-            Parameters.SetParameter(DocToUpdate.Document, "Element1PatternNumSlots", "8")
-        End If
-        If Parameters.GetParameter(DocToUpdate.Document, "Element2NumFilters").Value = 3 Then
-            Parameters.SetParameter(DocToUpdate.Document, "Element2NumHoles", "10")
-            Parameters.SetParameter(DocToUpdate.Document, "Element2HoleOffset", "145.00 mm")
-            Parameters.SetParameter(DocToUpdate.Document, "Element2PatternNumSlots", "5")
-        Else
-            Parameters.SetParameter(DocToUpdate.Document, "Element2NumHoles", "14")
-            Parameters.SetParameter(DocToUpdate.Document, "Element2HoleOffset", "150.00 mm")
-            Parameters.SetParameter(DocToUpdate.Document, "Element2PatternNumSlots", "8")
-        End If
-        If Parameters.GetParameter(DocToUpdate.Document, "Element3NumFilters").Value = 3 Then
-            Parameters.SetParameter(DocToUpdate.Document, "Element3NumHoles", "10")
-            Parameters.SetParameter(DocToUpdate.Document, "Element3HoleOffset", "188.75 mm")
-            Parameters.SetParameter(DocToUpdate.Document, "Element3PatternNumSlots", "5")
-        Else
-            Parameters.SetParameter(DocToUpdate.Document, "Element3NumHoles", "14")
-            Parameters.SetParameter(DocToUpdate.Document, "Element3HoleOffset", "150.00 mm")
-            Parameters.SetParameter(DocToUpdate.Document, "Element3PatternNumSlots", "8")
-        End If
-        If Parameters.GetParameter(DocToUpdate.Document, "Element4NumFilters").Value = 3 Then
-            Parameters.SetParameter(DocToUpdate.Document, "Element4NumHoles", "10")
-            Parameters.SetParameter(DocToUpdate.Document, "Element4HoleOffset", "188.75 mm")
-            Parameters.SetParameter(DocToUpdate.Document, "Element4PatternNumSlots", "5")
-        Else
-            Parameters.SetParameter(DocToUpdate.Document, "Element4NumHoles", "14")
-            Parameters.SetParameter(DocToUpdate.Document, "Element4HoleOffset", "193.75 mm")
-            Parameters.SetParameter(DocToUpdate.Document, "Element4PatternNumSlots", "8")
-        End If
-    End Sub
-
     ''' <summary>
     ''' Based in part on this post: http://forums.autodesk.com/t5/inventor-customization/check-if-it-is-derived-part-in-vba/td-p/5147080
     ''' </summary>
@@ -124,82 +82,226 @@ Public Class ExtClass
         If TypeOf DocToUpdate.Document Is PartDocument Then
             Dim derivedpartcheck As PartDocument = DocToUpdate.Document
             If derivedpartcheck.ComponentDefinition.ReferenceComponents.DerivedPartComponents.Count = 0 Then
+                Dim Element1NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "MasterElement1NumFilters")
+                Dim Element2NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "MasterElement2NumFilters")
+                Dim Element3NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "MasterElement3NumFilters")
+                Dim Element4NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "MasterElement4NumFilters")
                 Select Case NumFiltersWide.Value
                     Case 7
                         Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "2 ul")
-                    Case 8
-                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "2 ul")
-                    Case 9
-                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
-                    Case 10
-                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
-                    Case 11
-                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
-                    Case 12
-                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
-                    Case 13
-                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "4 ul")
-                    Case 14
-                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "4 ul")
-                    Case 15
-                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "4 ul")
-                End Select
-            Else
-                Dim Element1NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "Element1NumFilters")
-                Dim Element2NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "Element2NumFilters")
-                Dim Element3NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "Element3NumFilters")
-                Dim Element4NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "Element4NumFilters")
-
-                Select Case NumFiltersWide.Value
-                    Case 7
                         Element1NumFilters.Value = 4
                         Element2NumFilters.Value = 3
                     Case 8
+                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "2 ul")
                         Element1NumFilters.Value = 4
                         Element2NumFilters.Value = 4
                     Case 9
+                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
                         Element1NumFilters.Value = 3
                         Element2NumFilters.Value = 3
                         Element3NumFilters.Value = 3
                     Case 10
+                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
                         Element1NumFilters.Value = 3
                         Element2NumFilters.Value = 4
                         Element3NumFilters.Value = 3
                     Case 11
+                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
                         Element1NumFilters.Value = 4
                         Element2NumFilters.Value = 3
                         Element3NumFilters.Value = 4
                     Case 12
+                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
                         Element1NumFilters.Value = 4
                         Element2NumFilters.Value = 4
                         Element3NumFilters.Value = 4
                     Case 13
+                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "4 ul")
                         Element1NumFilters.Value = 3
                         Element2NumFilters.Value = 3
                         Element3NumFilters.Value = 4
                         Element4NumFilters.Value = 3
                     Case 14
+                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "4 ul")
                         Element1NumFilters.Value = 3
                         Element2NumFilters.Value = 4
                         Element3NumFilters.Value = 4
                         Element4NumFilters.Value = 3
                     Case 15
+                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "4 ul")
                         Element1NumFilters.Value = 4
                         Element2NumFilters.Value = 3
                         Element3NumFilters.Value = 4
                         Element4NumFilters.Value = 4
-
-                    Case Else
-
                 End Select
+            Else
+                'change something in one of the other files that isn't derived from the master part file.
+
+
             End If
         End If
 
     End Sub
 
+    ''' <summary>
+    ''' Sorts out the standard options for each width-based member
+    ''' </summary>
+    ''' <param name="DocToUpdate">The ICADDoc object whose document property we need to grab in order to edit parameters.</param>
+    ''' <param name="ElementNum">The Element Number to edit.</param>
+    ''' <param name="NumHoles">The Number of Holes in this element pattern.</param>
+    ''' <param name="HoleOffset">The Offset distance towards the left of the member from the Section intersection.</param>
+    ''' <param name="PatternNumSlots">The number of slots in this element pattern.</param>
+    ''' <param name="PatternStart">The pattern start value for either the holes or slots.</param>
+    Sub UpdateKeyParameters(ByVal DocToUpdate As Document,
+                            ByVal ElementNum As Integer,
+                            ByVal NumHoles As Integer,
+                            ByVal HoleOffset As String,
+                            ByVal PatternNumSlots As Integer,
+                            ByVal PatternStart As String)
+
+        'default options
+        Parameters.SetParameter(DocToUpdate.Document, "Element" & ElementNum.ToString() & "NumHoles", NumHoles.ToString())
+        Parameters.SetParameter(DocToUpdate.Document, "Element" & ElementNum.ToString() & "HoleOffset", HoleOffset)
+        Parameters.SetParameter(DocToUpdate.Document, "Element" & ElementNum.ToString() & "PatternNumSlots", PatternNumSlots.ToString())
+        Parameters.SetParameter(DocToUpdate.Document, "Element" & ElementNum.ToString() & "PatternStart", PatternStart)
+
+    End Sub
+
+    ''' <summary>
+    ''' helps us cope with the possible different pattern start dimensions possible in Element 2.
+    ''' </summary>
+    ''' <param name="numFiltersWide"></param>
+    ''' <returns></returns>
+    Private Function GetPattern2Start(numFiltersWide As Parameter) As String
+        Select Case numFiltersWide.Value
+            Case 7
+                Return "250.00 mm"
+            Case 8
+                Return "180.00 mm"
+            Case 9 Or 11 Or 13 Or 15
+                Return "215.00 mm"
+            Case 10
+                Return "145.00 mm"
+            Case 12 Or 14
+                Return "270.00 mm"
+            Case Else
+                Return String.Empty
+        End Select
+    End Function
+
+    ''' <summary>
+    ''' helps us cope with the possible different pattern start dimensions possible in Element 3.
+    ''' </summary>
+    ''' <param name="numFiltersWide"></param>
+    ''' <returns></returns>
+    Private Function GetPattern3Start(numFiltersWide As Parameter) As String
+        Select Case numFiltersWide.Value
+            Case 9 Or 10
+                Return "250.00 mm"
+            Case 11 Or 12
+                Return "180.00 mm"
+            Case 13 Or 15
+                Return "145.00 mm"
+            Case 14
+                Return "270.00 mm"
+            Case Else
+                Return "133.7 mm" 'because l33t 8-)
+        End Select
+    End Function
+
+    ''' <summary>
+    ''' helps us cope with the possible different pattern start dimensions possible in Element 4.
+    ''' </summary>
+    ''' <param name="numFiltersWide"></param>
+    ''' <returns></returns>
+    Private Function GetPattern4Start(numFiltersWide As Parameter) As String
+        Select Case numFiltersWide.Value
+            Case 13 Or 14
+                Return "450.00 mm"
+            Case 15
+                Return "380.00 mm"
+            Case Else
+                Return "133.7 mm" 'because l33t 8-)
+        End Select
+    End Function
+
+    Sub UpdateFrontUpperFlange()
+        'MessageBox.Show("Hello World")
+        'UpdateKeyWidthParameters()
+        'need to include different offset as driven by GEK373 hole sketch blocks
+        'need to refactor this to allow modification of the same or similar groups of parameters in different but related part files.
+        ' it would be something like UpdateParams(Document, ElementNum,NumHoles,HoleOffset,PatternNumSlots,PatternStart
+        If Parameters.GetParameter(DocToUpdate.Document, "MasterElement1NumFilters").Value = 3 Then
+            UpdateKeyParameters(DocToUpdate.Document, 1, 10, "188.75 mm", 5, "501.00 mm")
+            'Parameters.SetParameter(DocToUpdate.Document, "Element1NumHoles", "10")
+            'Parameters.SetParameter(DocToUpdate.Document, "Element1HoleOffset", "188.75 mm")
+            'Parameters.SetParameter(DocToUpdate.Document, "Element1PatternNumSlots", "5")
+        Else
+            UpdateKeyParameters(DocToUpdate.Document, 1, 14, "193.75 mm", 8, "431.00 mm")
+            'Parameters.SetParameter(DocToUpdate.Document, "Element1NumHoles", "14")
+            'Parameters.SetParameter(DocToUpdate.Document, "Element1HoleOffset", "193.75 mm")
+            'Parameters.SetParameter(DocToUpdate.Document, "Element1PatternNumSlots", "8")
+        End If
+        If Parameters.GetParameter(DocToUpdate.Document, "MasterElement2NumFilters").Value = 3 Then
+            UpdateKeyParameters(DocToUpdate.Document, 2, 10, "145.00 mm", 5, GetPattern2Start(NumFiltersWide))
+            'Parameters.SetParameter(DocToUpdate.Document, "Element2NumHoles", "10")
+            'Parameters.SetParameter(DocToUpdate.Document, "Element2HoleOffset", "145.00 mm")
+            'Parameters.SetParameter(DocToUpdate.Document, "Element2PatternNumSlots", "5")
+        Else
+            UpdateKeyParameters(DocToUpdate.Document, 2, 14, "150.00 mm", 8, GetPattern2Start(NumFiltersWide))
+            'Parameters.SetParameter(DocToUpdate.Document, "Element2NumHoles", "14")
+            'Parameters.SetParameter(DocToUpdate.Document, "Element2HoleOffset", "150.00 mm")
+            'Parameters.SetParameter(DocToUpdate.Document, "Element2PatternNumSlots", "8")
+        End If
+        If Parameters.GetParameter(DocToUpdate.Document, "MasterElement3NumFilters").Value = 3 Then
+            UpdateKeyParameters(DocToUpdate.Document, 3, 10, "188.75 mm", 5, GetPattern3Start(NumFiltersWide))
+            'Parameters.SetParameter(DocToUpdate.Document, "Element3NumHoles", "10")
+            'Parameters.SetParameter(DocToUpdate.Document, "Element3HoleOffset", "188.75 mm")
+            'Parameters.SetParameter(DocToUpdate.Document, "Element3PatternNumSlots", "5")
+        Else
+            UpdateKeyParameters(DocToUpdate.Document, 3, 14, "150.00 mm", 8, GetPattern3Start(NumFiltersWide))
+            'Parameters.SetParameter(DocToUpdate.Document, "Element3NumHoles", "14")
+            'Parameters.SetParameter(DocToUpdate.Document, "Element3HoleOffset", "150.00 mm")
+            'Parameters.SetParameter(DocToUpdate.Document, "Element3PatternNumSlots", "8")
+        End If
+        If Parameters.GetParameter(DocToUpdate.Document, "MasterElement4NumFilters").Value = 3 Then
+            UpdateKeyParameters(DocToUpdate.Document, 4, 10, "188.75 mm", 5, GetPattern4Start(NumFiltersWide))
+            'Parameters.SetParameter(DocToUpdate.Document, "Element4NumHoles", "10")
+            'Parameters.SetParameter(DocToUpdate.Document, "Element4HoleOffset", "188.75 mm")
+            'Parameters.SetParameter(DocToUpdate.Document, "Element4PatternNumSlots", "5")
+        Else
+            UpdateKeyParameters(DocToUpdate.Document, 4, 14, "193.75 mm", 8, GetPattern4Start(NumFiltersWide))
+            'Parameters.SetParameter(DocToUpdate.Document, "Element4NumHoles", "14")
+            'Parameters.SetParameter(DocToUpdate.Document, "Element4HoleOffset", "193.75 mm")
+            'Parameters.SetParameter(DocToUpdate.Document, "Element4PatternNumSlots", "8")
+        End If
+    End Sub
+
+
+
     Sub UpdateFrontBottomFlange()
         UpdateKeyWidthParameters()
         'need to add any width-specific parameter changes here.
+        If Parameters.GetParameter(DocToUpdate.Document, "MasterElement1NumFilters").Value = 3 Then
+
+        Else
+
+        End If
+        If Parameters.GetParameter(DocToUpdate.Document, "MasterElement2NumFilters").Value = 3 Then
+
+        Else
+
+        End If
+        If Parameters.GetParameter(DocToUpdate.Document, "MasterElement3NumFilters").Value = 3 Then
+
+        Else
+
+        End If
+        If Parameters.GetParameter(DocToUpdate.Document, "MasterElement4NumFilters").Value = 3 Then
+
+        Else
+
+        End If
 
     End Sub
 
