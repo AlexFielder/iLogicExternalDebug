@@ -39,23 +39,25 @@ Public Class ExtClass
         NumFiltersWide = Parameters.GetParameter(DocToUpdate.Document, "NumFiltersWide")
         NumFiltersHigh = Parameters.GetParameter(DocToUpdate.Document, "NumFiltersHigh")
         NumFiltrationStages = Parameters.GetParameter(DocToUpdate.Document, "FilterHouseNumFiltrationStages")
+        NumElementsWide = Parameters.GetParameter(DocToUpdate.Document, "NumElementsWide")
 
         Select Case iProperties.SetorCreateCustomiProperty(DocToUpdate.Document, "BasePartNumber")
-            Case "Master-FrontUpperFlange"
-                UpdateFrontUpperFlange()
-            Case "Master-FrontBottomFlange"
-                UpdateFrontBottomFlange()
-            Case "Master-RearBottomFlange"
-                UpdateRearBottomFlange()
-            Case "Master-InterBottomFlange"
-                UpdateInterBottomFlange()
-            Case "Master-RearUpperFlange"
-                UpdateRearUpperFlange()
-            Case "Master-InterUpperFlange"
-                UpdateInterUpperFlange()
-
-            Case "FilterModuleMaster" ' our master part file so this better not break anything!
+            Case "FilterModuleMaster" ' our master part file so this better not break anything and updating it first makes sense!
                 UpdateFilterModuleMaster()
+            Case "Master-FrontUpperFlange"
+                UpdateFrontUpperFlange("Master-FrontUpperFlange")
+            Case "Master-FrontBottomFlange"
+                UpdateFrontBottomFlange("Master-FrontBottomFlange")
+            Case "Master-RearBottomFlange"
+                UpdateRearBottomFlange("Master-RearBottomFlange")
+            Case "Master-InterBottomFlange"
+                UpdateInterBottomFlange("Master-InterBottomFlange")
+            Case "Master-RearUpperFlange"
+                UpdateRearUpperFlange("Master-RearUpperFlange")
+            Case "Master-InterUpperFlange"
+                UpdateInterUpperFlange("Master-InterUpperFlange")
+
+
             Case "Add more as required"
 
             Case Else
@@ -65,9 +67,22 @@ Public Class ExtClass
 
     End Sub
     'Key Parameters
-    Public NumFiltersWide As Inventor.Parameter = Nothing
-    Public NumFiltersHigh As Inventor.Parameter = Nothing
-    Public NumFiltrationStages As Inventor.Parameter = Nothing
+    ''' <summary>
+    ''' The width of this module in Filters
+    ''' </summary>
+    Public NumFiltersWide As Parameter = Nothing
+    ''' <summary>
+    ''' The height of this module in Filters
+    ''' </summary>
+    Public NumFiltersHigh As Parameter = Nothing
+    ''' <summary>
+    ''' The number of filtration stages in this and other modules for this project.
+    ''' </summary>
+    Public NumFiltrationStages As Parameter = Nothing
+    ''' <summary>
+    ''' The number of Elements in this module.
+    ''' </summary>
+    Public NumElementsWide As Parameter = Nothing
 
     Sub UpdateFilterModuleMaster()
         'MessageBox.Show("Hello World")
@@ -153,6 +168,7 @@ Public Class ExtClass
     ''' <param name="PatternNumSlots">The number of slots in this element pattern.</param>
     ''' <param name="PatternStart">The pattern start value for either the holes or slots.</param>
     Sub UpdateKeyParameters(ByVal DocToUpdate As Document,
+                            ByVal MasterpartName As String,
                             ByVal ElementNum As Integer,
                             ByVal NumHoles As Integer,
                             ByVal HoleOffset As String,
@@ -160,138 +176,246 @@ Public Class ExtClass
                             ByVal PatternStart As String)
 
         'default options
-        Parameters.SetParameter(DocToUpdate.Document, "Element" & ElementNum.ToString() & "NumHoles", NumHoles.ToString())
-        Parameters.SetParameter(DocToUpdate.Document, "Element" & ElementNum.ToString() & "HoleOffset", HoleOffset)
-        Parameters.SetParameter(DocToUpdate.Document, "Element" & ElementNum.ToString() & "PatternNumSlots", PatternNumSlots.ToString())
-        Parameters.SetParameter(DocToUpdate.Document, "Element" & ElementNum.ToString() & "PatternStart", PatternStart)
+        If MasterpartName.Equals("Master-FrontUpperFlange") Then
+            Parameters.SetParameter(DocToUpdate.Document, "Element" & ElementNum.ToString() & "NumHoles", NumHoles.ToString())
+            Parameters.SetParameter(DocToUpdate.Document, "Element" & ElementNum.ToString() & "HoleOffset", HoleOffset)
+            Parameters.SetParameter(DocToUpdate.Document, "Element" & ElementNum.ToString() & "PatternNumSlots", PatternNumSlots.ToString())
+            Parameters.SetParameter(DocToUpdate.Document, "Element" & ElementNum.ToString() & "PatternStart", PatternStart)
+            'ElseIf MasterpartName.Equals("Master-FrontBottomFlange") Then
+            '    Parameters.SetParameter(DocToUpdate.Document,
+            '                            "Element" & ElementNum.ToString() & "Pattern" & PatternNum.ToString() & "Start", PatternStart)
+            '    Parameters.SetParameter(DocToUpdate.Document,
+            '                            "Element" & ElementNum.ToString() & "Pattern" & PatternNum.ToString() & "NumSlots", PatternNumSlots)
+
+        Else
+
+        End If
+
+
+    End Sub
+
+    ''' <summary>
+    ''' Takes a bunch of inputs and updates parameters
+    ''' </summary>
+    ''' <param name="DocToUpdate"></param>
+    ''' <param name="MasterpartName"></param>
+    ''' <param name="ElementNum"></param>
+    ''' <param name="PatternNum"></param>
+    ''' <param name="PatternNumSlots"></param>
+    ''' <param name="PatternStart"></param>
+    ''' <param name="PatternSpacing"></param>
+    Sub UpdateKeyPatternParameters(ByVal DocToUpdate As Document,
+                                   ByVal MasterpartName As String,
+                                   ByVal ElementNum As Integer,
+                                   ByVal PatternNum As Integer,
+                                   ByVal PatternNumSlots As Integer,
+                                   ByVal PatternStart As String,
+                                   ByVal PatternSpacing As String)
+        Parameters.SetParameter(DocToUpdate.Document, "Element" & ElementNum.ToString() & "Pattern" & PatternNum.ToString() & "Start", PatternStart)
+        Parameters.SetParameter(DocToUpdate.Document, "Element" & ElementNum.ToString() & "Pattern" & PatternNum.ToString() & "NumSlots", PatternNumSlots)
+        Parameters.SetParameter(DocToUpdate.Document, "Element" & ElementNum.ToString() & "Pattern" & PatternNum.ToString() & "Spacing", PatternStart)
 
     End Sub
 
     ''' <summary>
     ''' helps us cope with the possible different pattern start dimensions possible in Element 2.
     ''' </summary>
-    ''' <param name="numFiltersWide"></param>
     ''' <returns></returns>
-    Private Function GetPattern2Start(numFiltersWide As Parameter) As String
-        Select Case numFiltersWide.Value
-            Case 7
-                Return "250.00 mm"
-            Case 8
-                Return "180.00 mm"
-            Case 9 Or 11 Or 13 Or 15
-                Return "215.00 mm"
-            Case 10
-                Return "145.00 mm"
-            Case 12 Or 14
-                Return "270.00 mm"
-            Case Else
-                Return String.Empty
-        End Select
+    Private Function GetPattern1Start(ByVal MasterpartName As String) As String
+        If MasterpartName.Equals("Master-FrontUpperFlange") Then
+            Select Case NumFiltersWide.Value
+                Case 7
+                    Return "250.00 mm"
+                Case 8
+                    Return "180.00 mm"
+                Case 9 Or 11 Or 13 Or 15
+                    Return "215.00 mm"
+                Case 10
+                    Return "145.00 mm"
+                Case 12 Or 14
+                    Return "270.00 mm"
+                Case Else
+                    Return String.Empty
+            End Select
+        ElseIf MasterpartName.Equals("Master-FrontBottomFlange") Then
+            Select Case NumFiltersWide.Value
+                Case 7 Or 8 Or 11 Or 12 Or 15
+                    Return "431.00 mm"
+                Case 9
+                    Return "501.00 mm"
+                Case 10 Or 13 Or 14
+                    Return "251.00 mm"
+                Case Else
+                    Return String.Empty
+            End Select
+        Else
+            Return String.Empty
+        End If
+    End Function
+
+    ''' <summary>
+    ''' helps us cope with the possible different pattern start dimensions possible in Element 2.
+    ''' </summary>
+    ''' <returns></returns>
+    Private Function GetPattern2Start(ByVal MasterpartName As String) As String
+        If MasterpartName.Equals("Master-FrontUpperFlange") Then
+            Select Case NumFiltersWide.Value
+                Case 7
+                    Return "250.00 mm"
+                Case 8
+                    Return "180.00 mm"
+                Case 9 Or 11 Or 13 Or 15
+                    Return "215.00 mm"
+                Case 10
+                    Return "145.00 mm"
+                Case 12 Or 14
+                    Return "270.00 mm"
+                Case Else
+                    Return String.Empty
+            End Select
+        ElseIf MasterpartName.Equals("Master-FrontBottomFlange") Then
+            Select Case NumFiltersWide.Value
+                Case 7
+                    Return "450.00 mm"
+                Case 8
+                    Return "380.00 mm"
+                Case 9 Or 11 Or 13 Or 15
+                    Return "415.00 mm"
+                Case 10 Or 12
+                    Return "345.00 mm"
+                Case 14
+                    Return "470.00 mm"
+            End Select
+        Else
+            Return String.Empty
+        End If
+
     End Function
 
     ''' <summary>
     ''' helps us cope with the possible different pattern start dimensions possible in Element 3.
     ''' </summary>
-    ''' <param name="numFiltersWide"></param>
     ''' <returns></returns>
-    Private Function GetPattern3Start(numFiltersWide As Parameter) As String
-        Select Case numFiltersWide.Value
-            Case 9 Or 10
-                Return "250.00 mm"
-            Case 11 Or 12
-                Return "180.00 mm"
-            Case 13 Or 15
-                Return "145.00 mm"
-            Case 14
-                Return "270.00 mm"
-            Case Else
-                Return "133.7 mm" 'because l33t 8-)
-        End Select
+    Private Function GetPattern3Start(ByVal MasterpartName As String) As String
+        If MasterpartName.Equals("Master-FrontUpperFlange") Then
+            Select Case NumFiltersWide.Value
+                Case 9 Or 10
+                    Return "250.00 mm"
+                Case 11 Or 12
+                    Return "180.00 mm"
+                Case 13 Or 15
+                    Return "145.00 mm"
+                Case 14
+                    Return "270.00 mm"
+                Case Else
+                    Return "133.7 mm" 'because l33t 8-)
+            End Select
+        ElseIf MasterpartName.Equals("Master-FrontBottomFlange") Then
+            Return String.Empty
+        Else
+            Return String.Empty
+        End If
+
     End Function
 
     ''' <summary>
     ''' helps us cope with the possible different pattern start dimensions possible in Element 4.
     ''' </summary>
-    ''' <param name="numFiltersWide"></param>
     ''' <returns></returns>
-    Private Function GetPattern4Start(numFiltersWide As Parameter) As String
-        Select Case numFiltersWide.Value
-            Case 13 Or 14
-                Return "450.00 mm"
-            Case 15
-                Return "380.00 mm"
-            Case Else
-                Return "133.7 mm" 'because l33t 8-)
-        End Select
+    Private Function GetPattern4Start(ByVal MasterpartName As String) As String
+        If MasterpartName.Equals("Master-FrontUpperFlange") Then
+            Select Case NumFiltersWide.Value
+                Case 13 Or 14
+                    Return "450.00 mm"
+                Case 15
+                    Return "380.00 mm"
+                Case Else
+                    Return "133.7 mm" 'because l33t 8-)
+            End Select
+        ElseIf MasterpartName.Equals("Master-FrontBottomFlange") Then
+            Return String.Empty
+        Else
+            Return String.Empty
+        End If
+
     End Function
 
-    Sub UpdateFrontUpperFlange()
+    Sub UpdateFrontUpperFlange(ByVal MasterpartName As String)
         'MessageBox.Show("Hello World")
         'UpdateKeyWidthParameters()
         'need to include different offset as driven by GEK373 hole sketch blocks
         'need to refactor this to allow modification of the same or similar groups of parameters in different but related part files.
         ' it would be something like UpdateParams(Document, ElementNum,NumHoles,HoleOffset,PatternNumSlots,PatternStart
         If Parameters.GetParameter(DocToUpdate.Document, "MasterElement1NumFilters").Value = 3 Then
-            UpdateKeyParameters(DocToUpdate.Document, 1, 10, "188.75 mm", 5, "501.00 mm")
-            'Parameters.SetParameter(DocToUpdate.Document, "Element1NumHoles", "10")
-            'Parameters.SetParameter(DocToUpdate.Document, "Element1HoleOffset", "188.75 mm")
-            'Parameters.SetParameter(DocToUpdate.Document, "Element1PatternNumSlots", "5")
+            'this line might need updating, I simply don't know as this stage.
+            UpdateKeyParameters(DocToUpdate.Document, MasterpartName, 1, 10, "188.75 mm", 5, "501.00 mm")
         Else
-            UpdateKeyParameters(DocToUpdate.Document, 1, 14, "193.75 mm", 8, "431.00 mm")
-            'Parameters.SetParameter(DocToUpdate.Document, "Element1NumHoles", "14")
-            'Parameters.SetParameter(DocToUpdate.Document, "Element1HoleOffset", "193.75 mm")
-            'Parameters.SetParameter(DocToUpdate.Document, "Element1PatternNumSlots", "8")
+            'this line might need updating, I simply don't know as this stage.
+            UpdateKeyParameters(DocToUpdate.Document, MasterpartName, 1, 14, "193.75 mm", 8, "431.00 mm")
         End If
         If Parameters.GetParameter(DocToUpdate.Document, "MasterElement2NumFilters").Value = 3 Then
-            UpdateKeyParameters(DocToUpdate.Document, 2, 10, "145.00 mm", 5, GetPattern2Start(NumFiltersWide))
-            'Parameters.SetParameter(DocToUpdate.Document, "Element2NumHoles", "10")
-            'Parameters.SetParameter(DocToUpdate.Document, "Element2HoleOffset", "145.00 mm")
-            'Parameters.SetParameter(DocToUpdate.Document, "Element2PatternNumSlots", "5")
+            UpdateKeyParameters(DocToUpdate.Document, MasterpartName, 2, 10, "145.00 mm", 5, GetPattern2Start(MasterpartName))
         Else
-            UpdateKeyParameters(DocToUpdate.Document, 2, 14, "150.00 mm", 8, GetPattern2Start(NumFiltersWide))
-            'Parameters.SetParameter(DocToUpdate.Document, "Element2NumHoles", "14")
-            'Parameters.SetParameter(DocToUpdate.Document, "Element2HoleOffset", "150.00 mm")
-            'Parameters.SetParameter(DocToUpdate.Document, "Element2PatternNumSlots", "8")
+            UpdateKeyParameters(DocToUpdate.Document, MasterpartName, 2, 14, "150.00 mm", 8, GetPattern2Start(MasterpartName))
         End If
         If Parameters.GetParameter(DocToUpdate.Document, "MasterElement3NumFilters").Value = 3 Then
-            UpdateKeyParameters(DocToUpdate.Document, 3, 10, "188.75 mm", 5, GetPattern3Start(NumFiltersWide))
-            'Parameters.SetParameter(DocToUpdate.Document, "Element3NumHoles", "10")
-            'Parameters.SetParameter(DocToUpdate.Document, "Element3HoleOffset", "188.75 mm")
-            'Parameters.SetParameter(DocToUpdate.Document, "Element3PatternNumSlots", "5")
+            UpdateKeyParameters(DocToUpdate.Document, MasterpartName, 3, 10, "188.75 mm", 5, GetPattern3Start(MasterpartName))
         Else
-            UpdateKeyParameters(DocToUpdate.Document, 3, 14, "150.00 mm", 8, GetPattern3Start(NumFiltersWide))
-            'Parameters.SetParameter(DocToUpdate.Document, "Element3NumHoles", "14")
-            'Parameters.SetParameter(DocToUpdate.Document, "Element3HoleOffset", "150.00 mm")
-            'Parameters.SetParameter(DocToUpdate.Document, "Element3PatternNumSlots", "8")
+            UpdateKeyParameters(DocToUpdate.Document, MasterpartName, 3, 14, "150.00 mm", 8, GetPattern3Start(MasterpartName))
         End If
         If Parameters.GetParameter(DocToUpdate.Document, "MasterElement4NumFilters").Value = 3 Then
-            UpdateKeyParameters(DocToUpdate.Document, 4, 10, "188.75 mm", 5, GetPattern4Start(NumFiltersWide))
-            'Parameters.SetParameter(DocToUpdate.Document, "Element4NumHoles", "10")
-            'Parameters.SetParameter(DocToUpdate.Document, "Element4HoleOffset", "188.75 mm")
-            'Parameters.SetParameter(DocToUpdate.Document, "Element4PatternNumSlots", "5")
+            UpdateKeyParameters(DocToUpdate.Document, MasterpartName, 4, 10, "188.75 mm", 5, GetPattern4Start(MasterpartName))
         Else
-            UpdateKeyParameters(DocToUpdate.Document, 4, 14, "193.75 mm", 8, GetPattern4Start(NumFiltersWide))
-            'Parameters.SetParameter(DocToUpdate.Document, "Element4NumHoles", "14")
-            'Parameters.SetParameter(DocToUpdate.Document, "Element4HoleOffset", "193.75 mm")
-            'Parameters.SetParameter(DocToUpdate.Document, "Element4PatternNumSlots", "8")
+            UpdateKeyParameters(DocToUpdate.Document, MasterpartName, 4, 14, "193.75 mm", 8, GetPattern4Start(MasterpartName))
         End If
     End Sub
 
 
 
-    Sub UpdateFrontBottomFlange()
-        UpdateKeyWidthParameters()
+    Sub UpdateFrontBottomFlange(ByVal MasterpartName As String)
+        'UpdateKeyWidthParameters()
         'need to add any width-specific parameter changes here.
+        'check if this module is in the bottom-most position within a stack.
+        If Parameters.GetParameter(DocToUpdate.Document, "FilterModuleInBottomPosition").Value = 1 Then
+            '0 = shown
+            Parameters.SetParameter(DocToUpdate.Document, "HideElement1BottomHole", 0)
+            Parameters.SetParameter(DocToUpdate.Document, "HideElement2BottomHole", 0)
+            If Parameters.GetParameter(DocToUpdate.Document, "NumElementsWide").Value = 4 Then
+                Parameters.SetParameter(DocToUpdate.Document, "HideElement3BottomHole", 0)
+            Else
+                'need to hide this if we have less than 4 elements because the Clarcor guys cheated and deleted the face of the hole.
+                Parameters.SetParameter(DocToUpdate.Document, "HideElement3BottomHole", 1)
+            End If
+        Else
+            '1 = not shown
+            Parameters.SetParameter(DocToUpdate.Document, "HideElement1BottomHole", 1)
+            Parameters.SetParameter(DocToUpdate.Document, "HideElement2BottomHole", 1)
+            Parameters.SetParameter(DocToUpdate.Document, "HideElement3BottomHole", 1)
+        End If
+        'Element 1 pattern 1 is independent of NumFilters
+        UpdateKeyPatternParameters(DocToUpdate.Document,
+                                   MasterpartName,
+                                   1, 1,
+                                   getPattern1NumSlots(MasterpartName),
+                                   GetPattern1Start(MasterpartName), "250.00 mm")
         If Parameters.GetParameter(DocToUpdate.Document, "MasterElement1NumFilters").Value = 3 Then
-
+            UpdateKeyPatternParameters(DocToUpdate.Document,
+                                       MasterpartName,
+                                       1,
+                                       2, 2, "251.00 mm", "1500.00 mm")
         Else
-
+            UpdateKeyPatternParameters(DocToUpdate.Document,
+                                       MasterpartName,
+                                       1,
+                                       2, 2, "251.00 mm", "2110.00 mm")
         End If
-        If Parameters.GetParameter(DocToUpdate.Document, "MasterElement2NumFilters").Value = 3 Then
+        UpdateKeyPatternParameters(DocToUpdate.Document, MasterpartName, 2, 1, getPattern2NumSlots(MasterpartName), GetPattern2Start(MasterpartName), "250.00 mm")
+        UpdateKeyPatternParameters(DocToUpdate.Document, MasterpartName, 2, 2, 2, "200.00 mm", getPattern2Spacing(MasterpartName))
+        'If Parameters.GetParameter(DocToUpdate.Document, "MasterElement2NumFilters").Value = 3 Then
 
-        Else
+        'Else
 
-        End If
+        'End If
         If Parameters.GetParameter(DocToUpdate.Document, "MasterElement3NumFilters").Value = 3 Then
 
         Else
@@ -305,8 +429,58 @@ Public Class ExtClass
 
     End Sub
 
+    Private Function getPattern2Spacing(masterpartName As String) As String
+        Select Case NumFiltersWide.Value
+            Case 7
+                Return "1500.00 mm"
+            Case 8
+                Return "2110.00 mm"
+            Case 9 Or 11 Or 13
+                Return "1430.00 mm"
+            Case 10 Or 12 Or 14
+                Return "2040.00 mm"
+            Case 15
+                Return "1430.00 mm"
+        End Select
+    End Function
 
-    Sub UpdateRearBottomFlange()
+    ''' <summary>
+    ''' returns the correct number of slots in horizontal bottom members.
+    ''' </summary>
+    ''' <param name="masterpartName">currently unused but can be utilised if it turns out we need the same signature.</param>
+    ''' <returns></returns>
+    Private Function getPattern1NumSlots(masterpartName As String) As Integer
+        Select Case NumFiltersWide.Value
+            Case 7 Or 8 Or 11 Or 12 Or 15
+                Return 8
+            Case 9
+                Return 5
+            Case 10 Or 14
+                Return 6
+            Case 13
+                Return 7
+            Case Else
+                Return 0
+        End Select
+    End Function
+
+    ''' <summary>
+    ''' returns the correct number of slots in horizontal bottom members.
+    ''' </summary>
+    ''' <param name="masterpartName"></param>
+    ''' <returns></returns>
+    Private Function getPattern2NumSlots(masterpartName As String) As Integer
+        Select Case NumFiltersWide.Value
+            Case 7 Or 9 Or 11 Or 13 Or 15
+                Return 5
+            Case 8 Or 10 Or 12
+                Return 8
+            Case 14
+                Return 7
+        End Select
+    End Function
+
+    Sub UpdateRearBottomFlange(ByVal MasterpartName As String)
         Select Case NumFiltersWide.Value
             Case 7
 
@@ -326,7 +500,7 @@ Public Class ExtClass
 
 
 
-    Sub UpdateInterBottomFlange()
+    Sub UpdateInterBottomFlange(ByVal MasterpartName As String)
         Select Case NumFiltersWide.Value
             Case 7
 
@@ -344,7 +518,7 @@ Public Class ExtClass
         End Select
     End Sub
 
-    Sub UpdateRearUpperFlange()
+    Sub UpdateRearUpperFlange(ByVal MasterpartName As String)
         Select Case NumFiltersWide.Value
             Case 7
 
@@ -363,7 +537,7 @@ Public Class ExtClass
     End Sub
 
 
-    Sub UpdateInterUpperFlange()
+    Sub UpdateInterUpperFlange(ByVal MasterpartName As String)
         Select Case NumFiltersWide.Value
             Case 7
 
