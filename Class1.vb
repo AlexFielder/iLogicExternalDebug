@@ -162,6 +162,7 @@ Public Class ExtClass
     ''' Sorts out the standard options for each width-based member
     ''' </summary>
     ''' <param name="DocToUpdate">The ICADDoc object whose document property we need to grab in order to edit parameters.</param>
+    ''' <param name="MasterpartName">The "MASTER" name of the part we are editing</param>
     ''' <param name="ElementNum">The Element Number to edit.</param>
     ''' <param name="NumHoles">The Number of Holes in this element pattern.</param>
     ''' <param name="HoleOffset">The Offset distance towards the left of the member from the Section intersection.</param>
@@ -197,7 +198,7 @@ Public Class ExtClass
     ''' <summary>
     ''' Takes a bunch of inputs and updates parameters
     ''' </summary>
-    ''' <param name="DocToUpdate"></param>
+    ''' <param name="DocToUpdate">The ICADDoc object whose document property we need to grab in order to edit parameters.</param>
     ''' <param name="MasterpartName"></param>
     ''' <param name="ElementNum"></param>
     ''' <param name="PatternNum"></param>
@@ -213,7 +214,7 @@ Public Class ExtClass
                                    ByVal PatternSpacing As String)
         Parameters.SetParameter(DocToUpdate.Document, "Element" & ElementNum.ToString() & "Pattern" & PatternNum.ToString() & "Start", PatternStart)
         Parameters.SetParameter(DocToUpdate.Document, "Element" & ElementNum.ToString() & "Pattern" & PatternNum.ToString() & "NumSlots", PatternNumSlots)
-        Parameters.SetParameter(DocToUpdate.Document, "Element" & ElementNum.ToString() & "Pattern" & PatternNum.ToString() & "Spacing", PatternStart)
+        Parameters.SetParameter(DocToUpdate.Document, "Element" & ElementNum.ToString() & "Pattern" & PatternNum.ToString() & "Spacing", PatternSpacing)
 
     End Sub
 
@@ -326,28 +327,114 @@ Public Class ExtClass
     '    End If
 
     'End Function
+    ''' <summary>
+    ''' Deprecated in favour of refactored version above.
+    ''' </summary>
+    ''' <param name="masterpartName"></param>
+    ''' <returns></returns>
+    'Private Function getPattern3Spacing(masterpartName As String) As String
+    '    Select Case NumFiltersWide.Value
+    '        Case 7 Or 8
+    '            Return "1337.00 mm * 1.5 ul" ' because we can't have this being 0
+    '        Case 9 Or 10
+    '            Return "1500.00 mm"
+    '        Case 11 Or 12
+    '            Return "2100.00 mm"
+    '        Case 13 Or 14 Or 15
+    '            Return "2040.00 mm"
+    '    End Select
+    'End Function
 
+    ''' <summary>
+    ''' Deprecated in favour of the gloval variant!
+    ''' </summary>
+    ''' <param name="masterpartName"></param>
+    ''' <returns></returns>
+    'Private Function getPattern3NumSlots(masterpartName As String) As Integer
+    '    Select Case NumFiltersWide.Value
+    '        Case 7 Or 8 Or 9 Or 10
+    '            Return 5
+    '        Case Else
+    '            Return 8
+    '    End Select
+    'End Function
+
+    ''' <summary>
+    ''' Deprecated in favour of the gloval variant!
+    ''' </summary>
+    ''' <param name="masterpartName"></param>
+    ''' <returns></returns>
+    'Private Function getPattern2Spacing(masterpartName As String) As String
+    '    Select Case NumFiltersWide.Value
+    '        Case 7
+    '            Return "1500.00 mm"
+    '        Case 8
+    '            Return "2110.00 mm"
+    '        Case 9 Or 11 Or 13
+    '            Return "1430.00 mm"
+    '        Case 10 Or 12 Or 14
+    '            Return "2040.00 mm"
+    '        Case 15
+    '            Return "1430.00 mm"
+    '    End Select
+    'End Function
+
+    ''' <summary>
+    ''' Deprecated in favour of the gloval variant!
+    ''' </summary>
+    ''' <param name="masterpartName"></param>
+    ''' <returns></returns>
+    'Private Function getPattern1NumSlots(masterpartName As String) As Integer
+    '    Select Case NumFiltersWide.Value
+    '        Case 7 Or 8 Or 11 Or 12 Or 15
+    '            Return 8
+    '        Case 9
+    '            Return 5
+    '        Case 10 Or 14
+    '            Return 6
+    '        Case 13
+    '            Return 7
+    '        Case Else
+    '            Return 0
+    '    End Select
+    'End Function
+
+    ''' <summary>
+    ''' returns the correct number of slots in horizontal bottom members.
+    ''' </summary>
+    ''' <param name="masterpartName"></param>
+    ''' <returns></returns>
+    'Private Function getPattern2NumSlots(masterpartName As String) As Integer
+    '    Select Case NumFiltersWide.Value
+    '        Case 7 Or 9 Or 11 Or 13 Or 15
+    '            Return 5
+    '        Case 8 Or 10 Or 12
+    '            Return 8
+    '        Case 14
+    '            Return 7
+    '    End Select
+    'End Function
     ''' <summary>
     ''' helps us cope with the possible different pattern start dimensions possible in Element 4.
     ''' </summary>
     ''' <returns></returns>
-    Private Function GetPattern4Start(ByVal MasterpartName As String) As String
-        If MasterpartName.Equals("Master-FrontUpperFlange") Then
-            'Select Case NumFiltersWide.Value
-            '    Case 13 Or 14
-            '        Return "450.00 mm"
-            '    Case 15
-            '        Return "380.00 mm"
-            '    Case Else
-            '        Return "133.7 mm" 'because l33t 8-)
-            'End Select
-        ElseIf MasterpartName.Equals("Master-FrontBottomFlange") Then
-            Return String.Empty
-        Else
-            Return String.Empty
-        End If
+    'Private Function GetPattern4Start(ByVal MasterpartName As String) As String
+    '    If MasterpartName.Equals("Master-FrontUpperFlange") Then
+    '        'Select Case NumFiltersWide.Value
+    '        '    Case 13 Or 14
+    '        '        Return "450.00 mm"
+    '        '    Case 15
+    '        '        Return "380.00 mm"
+    '        '    Case Else
+    '        '        Return "133.7 mm" 'because l33t 8-)
+    '        'End Select
+    '    ElseIf MasterpartName.Equals("Master-FrontBottomFlange") Then
+    '        Return String.Empty
+    '    Else
+    '        Return String.Empty
+    '    End If
 
-    End Function
+    'End Function
 
     Sub UpdateFrontUpperFlange(ByVal MasterpartName As String)
         'MessageBox.Show("Hello World")
@@ -427,7 +514,7 @@ Public Class ExtClass
         UpdateKeyPatternParameters(DocToUpdate.Document, MasterpartName, 3, 2, 2, "200.00 mm", getPatternSpacing(3, MasterpartName))
         'Element 4
         UpdateKeyPatternParameters(
-            DocToUpdate.Document, MasterpartName, 3, 1, getPatternNumSlots(4, MasterpartName), GetPattern4Start(MasterpartName), "250.00 mm")
+            DocToUpdate.Document, MasterpartName, 3, 1, getPatternNumSlots(4, MasterpartName), getPatternStart(4, MasterpartName), "250.00 mm")
 
         UpdateKeyPatternParameters(DocToUpdate.Document, MasterpartName, 4, 2, 2, "200.00 mm", getPatternSpacing(4, MasterpartName))
         'If Parameters.GetParameter(DocToUpdate.Document, "MasterElement2NumFilters").Value = 3 Then
@@ -448,6 +535,12 @@ Public Class ExtClass
 
     End Sub
 
+    ''' <summary>
+    ''' Grabs our pattern start value based on masterpartname and elementnum
+    ''' </summary>
+    ''' <param name="ElementNum"></param>
+    ''' <param name="masterpartname"></param>
+    ''' <returns></returns>
     Private Function getPatternStart(ByVal ElementNum As Integer, ByVal masterpartname As String) As String
         Select Case masterpartname
             Case "Master-FrontUpperFlange"
@@ -555,6 +648,8 @@ Public Class ExtClass
                                 Return "133.7 mm" 'because l33t 8-)
                         End Select
                 End Select
+            Case Else
+                Throw New NotImplementedException
         End Select
     End Function
 
@@ -652,93 +747,7 @@ Public Class ExtClass
         End Select
     End Function
 
-    ''' <summary>
-    ''' Deprecated in favour of refactored version above.
-    ''' </summary>
-    ''' <param name="masterpartName"></param>
-    ''' <returns></returns>
-    Private Function getPattern3Spacing(masterpartName As String) As String
-        Select Case NumFiltersWide.Value
-            Case 7 Or 8
-                Return "1337.00 mm * 1.5 ul" ' because we can't have this being 0
-            Case 9 Or 10
-                Return "1500.00 mm"
-            Case 11 Or 12
-                Return "2100.00 mm"
-            Case 13 Or 14 Or 15
-                Return "2040.00 mm"
-        End Select
-    End Function
 
-    ''' <summary>
-    ''' Deprecated in favour of the gloval variant!
-    ''' </summary>
-    ''' <param name="masterpartName"></param>
-    ''' <returns></returns>
-    Private Function getPattern3NumSlots(masterpartName As String) As Integer
-        Select Case NumFiltersWide.Value
-            Case 7 Or 8 Or 9 Or 10
-                Return 5
-            Case Else
-                Return 8
-        End Select
-    End Function
-
-    ''' <summary>
-    ''' Deprecated in favour of the gloval variant!
-    ''' </summary>
-    ''' <param name="masterpartName"></param>
-    ''' <returns></returns>
-    Private Function getPattern2Spacing(masterpartName As String) As String
-        Select Case NumFiltersWide.Value
-            Case 7
-                Return "1500.00 mm"
-            Case 8
-                Return "2110.00 mm"
-            Case 9 Or 11 Or 13
-                Return "1430.00 mm"
-            Case 10 Or 12 Or 14
-                Return "2040.00 mm"
-            Case 15
-                Return "1430.00 mm"
-        End Select
-    End Function
-
-    ''' <summary>
-    ''' Deprecated in favour of the gloval variant!
-    ''' </summary>
-    ''' <param name="masterpartName"></param>
-    ''' <returns></returns>
-    Private Function getPattern1NumSlots(masterpartName As String) As Integer
-        Select Case NumFiltersWide.Value
-            Case 7 Or 8 Or 11 Or 12 Or 15
-                Return 8
-            Case 9
-                Return 5
-            Case 10 Or 14
-                Return 6
-            Case 13
-                Return 7
-            Case Else
-                Return 0
-        End Select
-    End Function
-
-    ''' <summary>
-    ''' returns the correct number of slots in horizontal bottom members.
-    ''' </summary>
-    ''' <param name="masterpartName"></param>
-    ''' <returns></returns>
-    Private Function getPattern2NumSlots(masterpartName As String) As Integer
-        Select Case NumFiltersWide.Value
-            Case 7 Or 9 Or 11 Or 13 Or 15
-                Return 5
-            Case 8 Or 10 Or 12
-                Return 8
-            Case 14
-                Return 7
-        End Select
-    End Function
 
     Sub UpdateRearBottomFlange(ByVal MasterpartName As String)
         Select Case NumFiltersWide.Value
