@@ -221,102 +221,111 @@ Public Class ExtClass
     ''' helps us cope with the possible different pattern start dimensions possible in Element 2.
     ''' </summary>
     ''' <returns></returns>
-    Private Function GetPattern1Start(ByVal MasterpartName As String) As String
-        If MasterpartName.Equals("Master-FrontUpperFlange") Then
-            Select Case NumFiltersWide.Value
-                Case 7
-                    Return "250.00 mm"
-                Case 8
-                    Return "180.00 mm"
-                Case 9 Or 11 Or 13 Or 15
-                    Return "215.00 mm"
-                Case 10
-                    Return "145.00 mm"
-                Case 12 Or 14
-                    Return "270.00 mm"
-                Case Else
-                    Return String.Empty
-            End Select
-        ElseIf MasterpartName.Equals("Master-FrontBottomFlange") Then
-            Select Case NumFiltersWide.Value
-                Case 7 Or 8 Or 11 Or 12 Or 15
-                    Return "431.00 mm"
-                Case 9
-                    Return "501.00 mm"
-                Case 10 Or 13 Or 14
-                    Return "251.00 mm"
-                Case Else
-                    Return String.Empty
-            End Select
-        Else
-            Return String.Empty
-        End If
-    End Function
+    'Private Function GetPattern1Start(ByVal MasterpartName As String) As String
+    '    If MasterpartName.Equals("Master-FrontUpperFlange") Then
+    '        'Select Case NumFiltersWide.Value
+    '        '    Case 7
+    '        '        Return "250.00 mm"
+    '        '    Case 8
+    '        '        Return "180.00 mm"
+    '        '    Case 9 Or 11 Or 13 Or 15
+    '        '        Return "215.00 mm"
+    '        '    Case 10
+    '        '        Return "145.00 mm"
+    '        '    Case 12 Or 14
+    '        '        Return "270.00 mm"
+    '        '    Case Else
+    '        '        Return String.Empty
+    '        'End Select
+    '    ElseIf MasterpartName.Equals("Master-FrontBottomFlange") Then
+    '        'Select Case NumFiltersWide.Value
+    '        '    Case 7 Or 8 Or 11 Or 12 Or 15
+    '        '        Return "431.00 mm"
+    '        '    Case 9
+    '        '        Return "501.00 mm"
+    '        '    Case 10 Or 13 Or 14
+    '        '        Return "251.00 mm"
+    '        '    Case Else
+    '        '        Return String.Empty
+    '        'End Select
+    '    Else
+    '        Return String.Empty
+    '    End If
+    'End Function
 
     ''' <summary>
     ''' helps us cope with the possible different pattern start dimensions possible in Element 2.
     ''' </summary>
     ''' <returns></returns>
-    Private Function GetPattern2Start(ByVal MasterpartName As String) As String
-        If MasterpartName.Equals("Master-FrontUpperFlange") Then
-            Select Case NumFiltersWide.Value
-                Case 7
-                    Return "250.00 mm"
-                Case 8
-                    Return "180.00 mm"
-                Case 9 Or 11 Or 13 Or 15
-                    Return "215.00 mm"
-                Case 10
-                    Return "145.00 mm"
-                Case 12 Or 14
-                    Return "270.00 mm"
-                Case Else
-                    Return String.Empty
-            End Select
-        ElseIf MasterpartName.Equals("Master-FrontBottomFlange") Then
-            Select Case NumFiltersWide.Value
-                Case 7
-                    Return "450.00 mm"
-                Case 8
-                    Return "380.00 mm"
-                Case 9 Or 11 Or 13 Or 15
-                    Return "415.00 mm"
-                Case 10 Or 12
-                    Return "345.00 mm"
-                Case 14
-                    Return "470.00 mm"
-            End Select
-        Else
-            Return String.Empty
-        End If
+    'Private Function GetPattern2Start(ByVal MasterpartName As String) As String
+    '    If MasterpartName.Equals("Master-FrontUpperFlange") Then
+    '        'Select Case NumFiltersWide.Value
+    '        '    Case 7
+    '        '        Return "250.00 mm"
+    '        '    Case 8
+    '        '        Return "180.00 mm"
+    '        '    Case 9 Or 11 Or 13 Or 15
+    '        '        Return "215.00 mm"
+    '        '    Case 10
+    '        '        Return "145.00 mm"
+    '        '    Case 12 Or 14
+    '        '        Return "270.00 mm"
+    '        '    Case Else
+    '        '        Return String.Empty
+    '        'End Select
+    '    ElseIf MasterpartName.Equals("Master-FrontBottomFlange") Then
+    '        'Select Case NumFiltersWide.Value
+    '        '    Case 7
+    '        '        Return "450.00 mm"
+    '        '    Case 8
+    '        '        Return "380.00 mm"
+    '        '    Case 9 Or 11 Or 13 Or 15
+    '        '        Return "415.00 mm"
+    '        '    Case 10 Or 12
+    '        '        Return "345.00 mm"
+    '        '    Case 14
+    '        '        Return "470.00 mm"
+    '        'End Select
+    '    Else
+    '        Return String.Empty
+    '    End If
 
-    End Function
+    'End Function
 
     ''' <summary>
     ''' helps us cope with the possible different pattern start dimensions possible in Element 3.
     ''' </summary>
     ''' <returns></returns>
-    Private Function GetPattern3Start(ByVal MasterpartName As String) As String
-        If MasterpartName.Equals("Master-FrontUpperFlange") Then
-            Select Case NumFiltersWide.Value
-                Case 9 Or 10
-                    Return "250.00 mm"
-                Case 11 Or 12
-                    Return "180.00 mm"
-                Case 13 Or 15
-                    Return "145.00 mm"
-                Case 14
-                    Return "270.00 mm"
-                Case Else
-                    Return "133.7 mm" 'because l33t 8-)
-            End Select
-        ElseIf MasterpartName.Equals("Master-FrontBottomFlange") Then
-            Return String.Empty
-        Else
-            Return String.Empty
-        End If
+    'Private Function GetPattern3Start(ByVal MasterpartName As String) As String
+    '    If MasterpartName.Equals("Master-FrontUpperFlange") Then
+    '        'Select Case NumFiltersWide.Value
+    '        '    Case 9 Or 10
+    '        '        Return "250.00 mm"
+    '        '    Case 11 Or 12
+    '        '        Return "180.00 mm"
+    '        '    Case 13 Or 15
+    '        '        Return "145.00 mm"
+    '        '    Case 14
+    '        '        Return "270.00 mm"
+    '        '    Case Else
+    '        '        Return "133.7 mm" 'because l33t 8-)
+    '        'End Select
+    '    ElseIf MasterpartName.Equals("Master-FrontBottomFlange") Then
+    '        'Select Case NumFiltersWide.Value
+    '        '    Case 9 Or 10
+    '        '        Return "450.00 mm"
+    '        '    Case 11 Or 12
+    '        '        Return "380.00 mm"
+    '        '    Case 13 Or 14 Or 15
+    '        '        Return "345.00 mm"
+    '        '    Case Else
+    '        '        Return "133.7 mm" 'because l33t 8-)
+    '        'End Select
+    '    Else
+    '        Return String.Empty
+    '    End If
 
-    End Function
+    'End Function
 
     ''' <summary>
     ''' helps us cope with the possible different pattern start dimensions possible in Element 4.
@@ -324,14 +333,14 @@ Public Class ExtClass
     ''' <returns></returns>
     Private Function GetPattern4Start(ByVal MasterpartName As String) As String
         If MasterpartName.Equals("Master-FrontUpperFlange") Then
-            Select Case NumFiltersWide.Value
-                Case 13 Or 14
-                    Return "450.00 mm"
-                Case 15
-                    Return "380.00 mm"
-                Case Else
-                    Return "133.7 mm" 'because l33t 8-)
-            End Select
+            'Select Case NumFiltersWide.Value
+            '    Case 13 Or 14
+            '        Return "450.00 mm"
+            '    Case 15
+            '        Return "380.00 mm"
+            '    Case Else
+            '        Return "133.7 mm" 'because l33t 8-)
+            'End Select
         ElseIf MasterpartName.Equals("Master-FrontBottomFlange") Then
             Return String.Empty
         Else
@@ -354,19 +363,19 @@ Public Class ExtClass
             UpdateKeyParameters(DocToUpdate.Document, MasterpartName, 1, 14, "193.75 mm", 8, "431.00 mm")
         End If
         If Parameters.GetParameter(DocToUpdate.Document, "MasterElement2NumFilters").Value = 3 Then
-            UpdateKeyParameters(DocToUpdate.Document, MasterpartName, 2, 10, "145.00 mm", 5, GetPattern2Start(MasterpartName))
+            UpdateKeyParameters(DocToUpdate.Document, MasterpartName, 2, 10, "145.00 mm", 5, getPatternStart(2, MasterpartName))
         Else
-            UpdateKeyParameters(DocToUpdate.Document, MasterpartName, 2, 14, "150.00 mm", 8, GetPattern2Start(MasterpartName))
+            UpdateKeyParameters(DocToUpdate.Document, MasterpartName, 2, 14, "150.00 mm", 8, getPatternStart(2, MasterpartName))
         End If
         If Parameters.GetParameter(DocToUpdate.Document, "MasterElement3NumFilters").Value = 3 Then
-            UpdateKeyParameters(DocToUpdate.Document, MasterpartName, 3, 10, "188.75 mm", 5, GetPattern3Start(MasterpartName))
+            UpdateKeyParameters(DocToUpdate.Document, MasterpartName, 3, 10, "188.75 mm", 5, getPatternStart(3, MasterpartName))
         Else
-            UpdateKeyParameters(DocToUpdate.Document, MasterpartName, 3, 14, "150.00 mm", 8, GetPattern3Start(MasterpartName))
+            UpdateKeyParameters(DocToUpdate.Document, MasterpartName, 3, 14, "150.00 mm", 8, getPatternStart(3, MasterpartName))
         End If
         If Parameters.GetParameter(DocToUpdate.Document, "MasterElement4NumFilters").Value = 3 Then
-            UpdateKeyParameters(DocToUpdate.Document, MasterpartName, 4, 10, "188.75 mm", 5, GetPattern4Start(MasterpartName))
+            UpdateKeyParameters(DocToUpdate.Document, MasterpartName, 4, 10, "188.75 mm", 5, getPatternStart(4, MasterpartName))
         Else
-            UpdateKeyParameters(DocToUpdate.Document, MasterpartName, 4, 14, "193.75 mm", 8, GetPattern4Start(MasterpartName))
+            UpdateKeyParameters(DocToUpdate.Document, MasterpartName, 4, 14, "193.75 mm", 8, getPatternStart(4, MasterpartName))
         End If
     End Sub
 
@@ -393,11 +402,8 @@ Public Class ExtClass
             Parameters.SetParameter(DocToUpdate.Document, "HideElement3BottomHole", 1)
         End If
         'Element 1 pattern 1 is independent of NumFilters
-        UpdateKeyPatternParameters(DocToUpdate.Document,
-                                   MasterpartName,
-                                   1, 1,
-                                   getPattern1NumSlots(MasterpartName),
-                                   GetPattern1Start(MasterpartName), "250.00 mm")
+        UpdateKeyPatternParameters(
+            DocToUpdate.Document, MasterpartName, 1, 1, getPatternNumSlots(1, MasterpartName), getPatternStart(1, MasterpartName), "250.00 mm")
         If Parameters.GetParameter(DocToUpdate.Document, "MasterElement1NumFilters").Value = 3 Then
             UpdateKeyPatternParameters(DocToUpdate.Document,
                                        MasterpartName,
@@ -409,8 +415,21 @@ Public Class ExtClass
                                        1,
                                        2, 2, "251.00 mm", "2110.00 mm")
         End If
-        UpdateKeyPatternParameters(DocToUpdate.Document, MasterpartName, 2, 1, getPattern2NumSlots(MasterpartName), GetPattern2Start(MasterpartName), "250.00 mm")
-        UpdateKeyPatternParameters(DocToUpdate.Document, MasterpartName, 2, 2, 2, "200.00 mm", getPattern2Spacing(MasterpartName))
+        'Element 2
+        UpdateKeyPatternParameters(
+            DocToUpdate.Document, MasterpartName, 2, 1, getPatternNumSlots(2, MasterpartName), getPatternStart(2, MasterpartName), "250.00 mm")
+
+        UpdateKeyPatternParameters(DocToUpdate.Document, MasterpartName, 2, 2, 2, "200.00 mm", getPatternSpacing(2, MasterpartName))
+        'Element 3
+        UpdateKeyPatternParameters(
+            DocToUpdate.Document, MasterpartName, 3, 1, getPatternNumSlots(3, MasterpartName), getPatternStart(3, MasterpartName), "250.00 mm")
+
+        UpdateKeyPatternParameters(DocToUpdate.Document, MasterpartName, 3, 2, 2, "200.00 mm", getPatternSpacing(3, MasterpartName))
+        'Element 4
+        UpdateKeyPatternParameters(
+            DocToUpdate.Document, MasterpartName, 3, 1, getPatternNumSlots(4, MasterpartName), GetPattern4Start(MasterpartName), "250.00 mm")
+
+        UpdateKeyPatternParameters(DocToUpdate.Document, MasterpartName, 4, 2, 2, "200.00 mm", getPatternSpacing(4, MasterpartName))
         'If Parameters.GetParameter(DocToUpdate.Document, "MasterElement2NumFilters").Value = 3 Then
 
         'Else
@@ -429,6 +448,247 @@ Public Class ExtClass
 
     End Sub
 
+    Private Function getPatternStart(ByVal ElementNum As Integer, ByVal masterpartname As String) As String
+        Select Case masterpartname
+            Case "Master-FrontUpperFlange"
+                ' I am aware that these could be combined. 2016-10-03 AF
+                Select Case ElementNum
+                    Case 1
+                        Select Case NumFiltersWide.Value
+                            Case 7
+                                Return "250.00 mm"
+                            Case 8
+                                Return "180.00 mm"
+                            Case 9 Or 11 Or 13 Or 15
+                                Return "215.00 mm"
+                            Case 10
+                                Return "145.00 mm"
+                            Case 12 Or 14
+                                Return "270.00 mm"
+                            Case Else
+                                Return "133.7 mm" 'because l33t 8-)
+                        End Select
+                    Case 2
+                        Select Case NumFiltersWide.Value
+                            Case 7
+                                Return "250.00 mm"
+                            Case 8
+                                Return "180.00 mm"
+                            Case 9 Or 11 Or 13 Or 15
+                                Return "215.00 mm"
+                            Case 10
+                                Return "145.00 mm"
+                            Case 12 Or 14
+                                Return "270.00 mm"
+                            Case Else
+                                Return "133.7 mm" 'because l33t 8-)
+                        End Select
+                    Case 3
+                        Select Case NumFiltersWide.Value
+                            Case 9 Or 10
+                                Return "250.00 mm"
+                            Case 11 Or 12
+                                Return "180.00 mm"
+                            Case 13 Or 15
+                                Return "145.00 mm"
+                            Case 14
+                                Return "270.00 mm"
+                            Case Else
+                                Return "133.7 mm" 'because l33t 8-)
+                        End Select
+                    Case 4
+                        Select Case NumFiltersWide.Value
+                            Case 13 Or 14
+                                Return "450.00 mm"
+                            Case 15
+                                Return "380.00 mm"
+                            Case Else
+                                Return "133.7 mm" 'because l33t 8-)
+                        End Select
+                End Select
+            Case "Master-FrontBottomFlange"
+                Select Case ElementNum
+                    Case 1
+                        Select Case NumFiltersWide.Value
+                            Case 7 Or 8 Or 11 Or 12 Or 15
+                                Return "431.00 mm"
+                            Case 9
+                                Return "501.00 mm"
+                            Case 10 Or 13 Or 14
+                                Return "251.00 mm"
+                            Case Else
+                                Return "133.7 mm" 'because l33t 8-)
+                        End Select
+                    Case 2
+                        Select Case NumFiltersWide.Value
+                            Case 7
+                                Return "450.00 mm"
+                            Case 8
+                                Return "380.00 mm"
+                            Case 9 Or 11 Or 13 Or 15
+                                Return "415.00 mm"
+                            Case 10 Or 12
+                                Return "345.00 mm"
+                            Case 14
+                                Return "470.00 mm"
+                            Case Else
+                                Return "133.7 mm" 'because l33t 8-)
+                        End Select
+                    Case 3
+                        Select Case NumFiltersWide.Value
+                            Case 9 Or 10
+                                Return "450.00 mm"
+                            Case 11 Or 12
+                                Return "380.00 mm"
+                            Case 13 Or 14 Or 15
+                                Return "345.00 mm"
+                            Case Else
+                                Return "133.7 mm" 'because l33t 8-)
+                        End Select
+                    Case 4
+                        Select Case NumFiltersWide.Value
+                            Case 13 Or 14
+                                Return "450.00 mm"
+                            Case 15
+                                Return "380.00 mm"
+                            Case Else
+                                Return "133.7 mm" 'because l33t 8-)
+                        End Select
+                End Select
+        End Select
+    End Function
+
+
+    Private Function getPatternSpacing(ByVal ElementNum As Integer, ByVal masterpartname As String) As String
+        Select Case masterpartname
+            Case "Master-FrontUpperFlange"
+
+            Case """Master-FrontBottomFlange"
+                Select Case ElementNum
+                    Case 1
+
+                    Case 2
+
+                    Case 3
+                        Select Case NumFiltersWide.Value
+                            Case 7 Or 8
+                                Return "1337.00 mm * 1.5 ul" ' because we can't have this being 0
+                            Case 9 Or 10
+                                Return "1500.00 mm"
+                            Case 11 Or 12
+                                Return "2100.00 mm"
+                            Case 13 Or 14 Or 15
+                                Return "2040.00 mm"
+                        End Select
+                    Case 4
+
+                End Select
+            Case Else
+
+        End Select
+    End Function
+
+    ''' <summary>
+    ''' A global variation of the individual getPattern{#}Numslots method.
+    ''' </summary>
+    ''' <param name="ElementNum"></param>
+    ''' <param name="masterpartname"></param>
+    ''' <returns></returns>
+    Private Function getPatternNumSlots(ByVal ElementNum As Integer, ByVal masterpartname As String) As Integer
+        Select Case masterpartname
+            Case "Master-FrontUpperFlange"
+                Select Case ElementNum
+                    Case 1
+
+                    Case 2
+
+                    Case 3
+
+                    Case 4
+
+                End Select
+            Case "Master-FrontBottomFlange"
+                Select Case ElementNum
+                    Case 1
+                        Select Case NumFiltersWide.Value
+                            Case 7 Or 8 Or 11 Or 12 Or 15
+                                Return 8
+                            Case 9
+                                Return 5
+                            Case 10 Or 14
+                                Return 6
+                            Case 13
+                                Return 7
+                            Case Else
+                                Return 0
+                        End Select
+                    Case 2
+                        Select Case NumFiltersWide.Value
+                            Case 7 Or 9 Or 11 Or 13 Or 15
+                                Return 5
+                            Case 8 Or 10 Or 12
+                                Return 8
+                            Case 14
+                                Return 7
+                        End Select
+                    Case 3
+                        Select Case NumFiltersWide.Value
+                            Case 7 Or 8 Or 9 Or 10
+                                Return 5
+                            Case Else
+                                Return 8
+                        End Select
+                    Case 4
+                        Select Case NumFiltersWide.Value
+                            Case 13 Or 14
+                                Return 5
+                            Case 15
+                                Return 8
+                            Case Else
+                                Return 7 'just returning a default value even though the pattern that depends upon it will be suppressed.
+                        End Select
+                End Select
+            Case Else
+        End Select
+    End Function
+
+    ''' <summary>
+    ''' Deprecated in favour of refactored version above.
+    ''' </summary>
+    ''' <param name="masterpartName"></param>
+    ''' <returns></returns>
+    Private Function getPattern3Spacing(masterpartName As String) As String
+        Select Case NumFiltersWide.Value
+            Case 7 Or 8
+                Return "1337.00 mm * 1.5 ul" ' because we can't have this being 0
+            Case 9 Or 10
+                Return "1500.00 mm"
+            Case 11 Or 12
+                Return "2100.00 mm"
+            Case 13 Or 14 Or 15
+                Return "2040.00 mm"
+        End Select
+    End Function
+
+    ''' <summary>
+    ''' Deprecated in favour of the gloval variant!
+    ''' </summary>
+    ''' <param name="masterpartName"></param>
+    ''' <returns></returns>
+    Private Function getPattern3NumSlots(masterpartName As String) As Integer
+        Select Case NumFiltersWide.Value
+            Case 7 Or 8 Or 9 Or 10
+                Return 5
+            Case Else
+                Return 8
+        End Select
+    End Function
+
+    ''' <summary>
+    ''' Deprecated in favour of the gloval variant!
+    ''' </summary>
+    ''' <param name="masterpartName"></param>
+    ''' <returns></returns>
     Private Function getPattern2Spacing(masterpartName As String) As String
         Select Case NumFiltersWide.Value
             Case 7
@@ -445,9 +705,9 @@ Public Class ExtClass
     End Function
 
     ''' <summary>
-    ''' returns the correct number of slots in horizontal bottom members.
+    ''' Deprecated in favour of the gloval variant!
     ''' </summary>
-    ''' <param name="masterpartName">currently unused but can be utilised if it turns out we need the same signature.</param>
+    ''' <param name="masterpartName"></param>
     ''' <returns></returns>
     Private Function getPattern1NumSlots(masterpartName As String) As Integer
         Select Case NumFiltersWide.Value
