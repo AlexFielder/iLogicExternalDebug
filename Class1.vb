@@ -488,7 +488,11 @@ Public Class ExtClass
 
 #Region "Vertical Members"
     Private Sub UpdateStage1LeftVertical(ByVal MasterpartName As String)
-        Throw New NotImplementedException()
+        If "parameter is bottom member" Then
+
+        ElseIf "the other option" Then
+
+        End If
     End Sub
 #End Region
 
@@ -510,11 +514,11 @@ Public Class ExtClass
                                 Return "250.00 mm"
                             Case 8
                                 Return "180.00 mm"
-                            Case 9 Or 11 Or 13 Or 15
+                            Case 9, 11, 13, 15
                                 Return "215.00 mm"
                             Case 10
                                 Return "145.00 mm"
-                            Case 12 Or 14
+                            Case 12, 14
                                 Return "270.00 mm"
                             Case Else
                                 Return "133.7 mm" 'because l33t 8-)
@@ -525,22 +529,22 @@ Public Class ExtClass
                                 Return "250.00 mm"
                             Case 8
                                 Return "180.00 mm"
-                            Case 9 Or 11 Or 13 Or 15
+                            Case 9, 11, 13, 15
                                 Return "215.00 mm"
                             Case 10
                                 Return "145.00 mm"
-                            Case 12 Or 14
+                            Case 12, 14
                                 Return "270.00 mm"
                             Case Else
                                 Return "133.7 mm" 'because l33t 8-)
                         End Select
                     Case 3
                         Select Case NumFiltersWide.Value
-                            Case 9 Or 10
+                            Case 9, 10
                                 Return "250.00 mm"
-                            Case 11 Or 12
+                            Case 11, 12
                                 Return "180.00 mm"
-                            Case 13 Or 15
+                            Case 13, 15
                                 Return "145.00 mm"
                             Case 14
                                 Return "270.00 mm"
@@ -549,7 +553,7 @@ Public Class ExtClass
                         End Select
                     Case 4
                         Select Case NumFiltersWide.Value
-                            Case 13 Or 14
+                            Case 13, 14
                                 Return "450.00 mm"
                             Case 15
                                 Return "380.00 mm"
@@ -561,11 +565,11 @@ Public Class ExtClass
                 Select Case ElementNum
                     Case 1
                         Select Case NumFiltersWide.Value
-                            Case 7 Or 8 Or 11 Or 12 Or 15
+                            Case 7, 8, 11, 12, 15
                                 Return "431.00 mm"
                             Case 9
                                 Return "501.00 mm"
-                            Case 10 Or 13 Or 14
+                            Case 10, 13, 14
                                 Return "251.00 mm"
                             Case Else
                                 Return "133.7 mm" 'because l33t 8-)
@@ -576,9 +580,9 @@ Public Class ExtClass
                                 Return "450.00 mm"
                             Case 8
                                 Return "380.00 mm"
-                            Case 9 Or 11 Or 13 Or 15
+                            Case 9, 11, 13, 15
                                 Return "415.00 mm"
-                            Case 10 Or 12
+                            Case 10, 12
                                 Return "345.00 mm"
                             Case 14
                                 Return "470.00 mm"
@@ -587,18 +591,18 @@ Public Class ExtClass
                         End Select
                     Case 3
                         Select Case NumFiltersWide.Value
-                            Case 9 Or 10
+                            Case 9, 10
                                 Return "450.00 mm"
-                            Case 11 Or 12
+                            Case 11, 12
                                 Return "380.00 mm"
-                            Case 13 Or 14 Or 15
+                            Case 13, 14, 15
                                 Return "345.00 mm"
                             Case Else
                                 Return "133.7 mm" 'because l33t 8-)
                         End Select
                     Case 4
                         Select Case NumFiltersWide.Value
-                            Case 13 Or 14
+                            Case 13, 14
                                 Return "450.00 mm"
                             Case 15
                                 Return "380.00 mm"
@@ -626,27 +630,27 @@ Public Class ExtClass
                                 Return "1500.00 mm"
                             Case 8
                                 Return "2110.00 mm"
-                            Case 9 Or 11 Or 13
+                            Case 9, 11, 13
                                 Return "1430.00 mm"
-                            Case 10 Or 12 Or 14
+                            Case 10, 12, 14
                                 Return "2040.00 mm"
                             Case 15
                                 Return "1430.00 mm"
                         End Select
                     Case 3
                         Select Case NumFiltersWide.Value
-                            Case 7 Or 8
+                            Case 7, 8
                                 Return "1337.00 mm * 1.5 ul" ' because we can't have this being 0
-                            Case 9 Or 10
+                            Case 9, 10
                                 Return "1500.00 mm"
-                            Case 11 Or 12
+                            Case 11, 12
                                 Return "2100.00 mm"
-                            Case 13 Or 14 Or 15
+                            Case 13, 14, 15
                                 Return "2040.00 mm"
                         End Select
                     Case 4
                         Select Case NumFiltersWide.Value
-                            Case 13 Or 14
+                            Case 13, 14
                                 Return "1500.00 mm"
                             Case 15
                                 Return "2110.00 mm"
@@ -682,11 +686,11 @@ Public Class ExtClass
                 Select Case ElementNum
                     Case 1
                         Select Case NumFiltersWide.Value
-                            Case 7 Or 8 Or 11 Or 12 Or 15
+                            Case 7, 8, 11, 12, 15
                                 Return 8
                             Case 9
                                 Return 5
-                            Case 10 Or 14
+                            Case 10, 14
                                 Return 6
                             Case 13
                                 Return 7
@@ -695,23 +699,23 @@ Public Class ExtClass
                         End Select
                     Case 2
                         Select Case NumFiltersWide.Value
-                            Case 7 Or 9 Or 11 Or 13 Or 15
+                            Case 7, 9, 11, 13, 15
                                 Return 5
-                            Case 8 Or 10 Or 12
+                            Case 8, 10, 12
                                 Return 8
                             Case 14
                                 Return 7
                         End Select
                     Case 3
                         Select Case NumFiltersWide.Value
-                            Case 7 Or 8 Or 9 Or 10
+                            Case 7, 8, 9, 10
                                 Return 5
                             Case Else
                                 Return 8
                         End Select
                     Case 4
                         Select Case NumFiltersWide.Value
-                            Case 13 Or 14
+                            Case 13, 14
                                 Return 5
                             Case 15
                                 Return 8
@@ -1053,8 +1057,25 @@ Public Class SheetMetal
         End If
     End Function
 
-    Public Shared Function GetorSetActiveKFactor(ByVal kFactor As String) As String
-        Return String.Empty
+    ''' <summary>
+    ''' Gets or sets the active kFactor based on a string input
+    ''' </summary>
+    ''' <param name="kFactor"></param>
+    ''' <returns></returns>
+    Public Shared Function GetorSetActiveKFactor(ByVal Doc As Document, ByVal kFactor As String) As String
+        Dim SheetmetalDoc As PartDocument = Doc
+        Dim sheetmetalCompdef As SheetMetalComponentDefinition = SheetmetalDoc.ComponentDefinition
+        If Not sheetmetalCompdef Is Nothing Then
+            Dim shtmetalstyle As SheetMetalStyle = sheetmetalCompdef.ActiveSheetMetalStyle
+            If Not kFactor.Equals(String.Empty) Then
+                shtmetalstyle.UnfoldMethod.kFactor = kFactor
+                Return shtmetalstyle.UnfoldMethod.kFactor
+            Else 'return the current
+                Return shtmetalstyle.UnfoldMethod.kFactor
+            End If
+        Else
+            Return String.Empty
+        End If
     End Function
 End Class
 
