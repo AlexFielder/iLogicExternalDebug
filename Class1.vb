@@ -860,6 +860,25 @@ Public MustInherit Class ModuleStage
             m_StageDepth = value
         End Set
     End Property
+    Private m_NumBottomSlots As String
+    Public Property NumBottomSlots() As String
+        Get
+            Return m_NumBottomSlots
+        End Get
+        Set(ByVal value As String)
+            m_NumBottomSlots = value
+        End Set
+    End Property
+
+    Private m_NumSideSlots As String
+    Public Property NumSideSlots() As String
+        Get
+            Return m_NumSideSlots
+        End Get
+        Set(ByVal value As String)
+            m_NumSideSlots = value
+        End Set
+    End Property
 End Class
 
 Public Class TwoStageFiltration
@@ -982,6 +1001,27 @@ Public Class FilterModule
         End Set
     End Property
 
+    Private m_StageOne As ModuleStage
+    Public Property StageOne() As ModuleStage
+        Get
+            Return m_StageOne
+        End Get
+        Set(ByVal value As ModuleStage)
+            m_StageOne = value
+        End Set
+    End Property
+
+
+    Private m_StageTwo As ModuleStage
+    Public Property StageTwo() As ModuleStage
+        Get
+            Return m_StageTwo
+        End Get
+        Set(ByVal value As ModuleStage)
+            m_StageTwo = value
+        End Set
+    End Property
+
     Private m_NumFiltersHigh As Integer
     Public Property NumFiltersHigh() As Integer
         Get
@@ -1078,7 +1118,14 @@ Public Class FilterModule
                 Modules.Add(ElementThree)
                 Modules.Add(ElementFour)
         End Select
+        Select Case NumFiltrationStages
+            Case 2
+                StageOne = New TwoStageFiltration()
+            Case 3
 
+            Case 4
+
+        End Select
 
     End Sub
 
