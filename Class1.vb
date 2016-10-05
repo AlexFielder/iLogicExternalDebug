@@ -48,12 +48,14 @@ Public Class ExtClass
         NumFiltersHigh.Value.ToString(),
         NumFiltrationStages.Value.ToString(),
         NumElementsWide.Value.ToString())
-        ThisModule.NumFiltersThisModule = NumFiltersWide.Value * NumFiltersHigh.Value
+        ThisModule.NumFiltersThisModule = Convert.ToInt32(NumFiltersWide.Value.ToString.Remove(" ul")) *
+            Convert.ToInt32(NumFiltersHigh.Value.ToString.Remove(" ul")) *
+            Convert.ToInt32(NumFiltrationStages.Value.ToString.Remove(" ul"))
 
         Select Case iProperties.SetorCreateCustomiProperty(DocToUpdate.Document, "BasePartNumber")
             Case "FilterModuleMaster" ' our master part file so this better not break anything and updating it first makes sense!
-                UpdateFilterModuleMaster()
-                'UpdateFilterModuleMaster(ThisModule)
+                'UpdateFilterModuleMaster()
+                UpdateFilterModuleMaster(ThisModule)
             Case "Master-FrontUpperFlange"
                 UpdateFrontUpperFlange("Master-FrontUpperFlange")
             Case "Master-FrontBottomFlange"
@@ -85,75 +87,88 @@ Public Class ExtClass
     ''' <param name="thisModule"></param>
     Private Sub UpdateFilterModuleMaster(thisModule As FilterModule)
         If TypeOf DocToUpdate.Document Is PartDocument Then
-            Dim derivedpartcheck As PartDocument = DocToUpdate.Document
-            If derivedpartcheck.ComponentDefinition.ReferenceComponents.DerivedPartComponents.Count = 0 Then
-                Dim Element1NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "MasterElement1NumFilters")
-                Dim Element2NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "MasterElement2NumFilters")
-                Dim Element3NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "MasterElement3NumFilters")
-                Dim Element4NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "MasterElement4NumFilters")
-                If Not thisModule.ElementFour Is Nothing Then
-                    Element4NumFilters.Value = thisModule.ElementFour.NumFilters
-                End If
-                If Not thisModule.ElementThree Is Nothing Then
-                    Element3NumFilters.Value = thisModule.ElementThree.NumFilters
-                End If
-
-                Element1NumFilters.Value = thisModule.ElementOne.NumFilters
-                Element2NumFilters.Value = thisModule.ElementTwo.NumFilters
-
-                Select Case NumFiltersWide.Value
-                    Case 7
-                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "2 ul")
-                        Element1NumFilters.Value = 4
-                        Element2NumFilters.Value = 3
-                    Case 8
-                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "2 ul")
-                        Element1NumFilters.Value = 4
-                        Element2NumFilters.Value = 4
-                    Case 9
-                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
-                        Element1NumFilters.Value = 3
-                        Element2NumFilters.Value = 3
-                        Element3NumFilters.Value = 3
-                    Case 10
-                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
-                        Element1NumFilters.Value = 3
-                        Element2NumFilters.Value = 4
-                        Element3NumFilters.Value = 3
-                    Case 11
-                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
-                        Element1NumFilters.Value = 4
-                        Element2NumFilters.Value = 3
-                        Element3NumFilters.Value = 4
-                    Case 12
-                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
-                        Element1NumFilters.Value = 4
-                        Element2NumFilters.Value = 4
-                        Element3NumFilters.Value = 4
-                    Case 13
-                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "4 ul")
-                        Element1NumFilters.Value = 3
-                        Element2NumFilters.Value = 3
-                        Element3NumFilters.Value = 4
-                        Element4NumFilters.Value = 3
-                    Case 14
-                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "4 ul")
-                        Element1NumFilters.Value = 3
-                        Element2NumFilters.Value = 4
-                        Element3NumFilters.Value = 4
-                        Element4NumFilters.Value = 3
-                    Case 15
-                        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "4 ul")
-                        Element1NumFilters.Value = 4
-                        Element2NumFilters.Value = 3
-                        Element3NumFilters.Value = 4
-                        Element4NumFilters.Value = 4
-                End Select
-            Else
-                'change something in one of the other files that isn't derived from the master part file.
-
-
+            'Dim derivedpartcheck As PartDocument = DocToUpdate.Document
+            'If derivedpartcheck.ComponentDefinition.ReferenceComponents.DerivedPartComponents.Count = 0 Then
+            Dim Element1NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "MasterElement1NumFilters")
+            Dim Element2NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "MasterElement2NumFilters")
+            Dim Element3NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "MasterElement3NumFilters")
+            Dim Element4NumFilters As Parameter = Parameters.GetParameter(DocToUpdate.Document, "MasterElement4NumFilters")
+            If Not thisModule.ElementFour Is Nothing Then
+                Element4NumFilters.Value = thisModule.ElementFour.NumFilters
             End If
+            If Not thisModule.ElementThree Is Nothing Then
+                Element3NumFilters.Value = thisModule.ElementThree.NumFilters
+            End If
+
+            Element1NumFilters.Value = thisModule.ElementOne.NumFilters
+            Element2NumFilters.Value = thisModule.ElementTwo.NumFilters
+            Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", thisModule.NumElementsWide)
+
+            'Select Case NumFiltersWide.Value
+            '    Case 7
+            '        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "2 ul")
+            '        Element1NumFilters.Value = 4
+            '        Element2NumFilters.Value = 3
+            '    Case 8
+            '        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "2 ul")
+            '        Element1NumFilters.Value = 4
+            '        Element2NumFilters.Value = 4
+            '    Case 9
+            '        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
+            '        Element1NumFilters.Value = 3
+            '        Element2NumFilters.Value = 3
+            '        Element3NumFilters.Value = 3
+            '    Case 10
+            '        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
+            '        Element1NumFilters.Value = 3
+            '        Element2NumFilters.Value = 4
+            '        Element3NumFilters.Value = 3
+            '    Case 11
+            '        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
+            '        Element1NumFilters.Value = 4
+            '        Element2NumFilters.Value = 3
+            '        Element3NumFilters.Value = 4
+            '    Case 12
+            '        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
+            '        Element1NumFilters.Value = 4
+            '        Element2NumFilters.Value = 4
+            '        Element3NumFilters.Value = 4
+            '    Case 13
+            '        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "4 ul")
+            '        Element1NumFilters.Value = 3
+            '        Element2NumFilters.Value = 3
+            '        Element3NumFilters.Value = 4
+            '        Element4NumFilters.Value = 3
+            '    Case 14
+            '        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "4 ul")
+            '        Element1NumFilters.Value = 3
+            '        Element2NumFilters.Value = 4
+            '        Element3NumFilters.Value = 4
+            '        Element4NumFilters.Value = 3
+            '    Case 15
+            '        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "4 ul")
+            '        Element1NumFilters.Value = 4
+            '        Element2NumFilters.Value = 3
+            '        Element3NumFilters.Value = 4
+            '        Element4NumFilters.Value = 4
+            'End Select
+
+            Select Case NumFiltrationStages.Value
+                Case 2
+
+                Case 3
+
+                Case 4
+
+                Case Else
+
+            End Select
+
+            'Else
+            '    'change something in one of the other files that isn't derived from the master part file.
+
+
+            'End If
         End If
     End Sub
     'Key Parameters
@@ -835,6 +850,32 @@ Public Class ModuleElement
     End Function
 End Class
 
+Public MustInherit Class ModuleStage
+    Private m_StageDepth As String
+    Public Property Depth() As String
+        Get
+            Return m_StageDepth
+        End Get
+        Set(ByVal value As String)
+            m_StageDepth = value
+        End Set
+    End Property
+End Class
+
+Public Class TwoStageFiltration
+    Inherits ModuleStage
+
+End Class
+
+Public Class ThreeStageFiltration
+    Inherits ModuleStage
+
+End Class
+
+Public Class FourStageFiltration
+    Inherits ModuleStage
+
+End Class
 Public Class ThreeWideElement
     Inherits ModuleElement
 
@@ -882,7 +923,15 @@ Public Class FilterModule
             m_ElementOne = value
         End Set
     End Property
-
+    Private m_Modules As List(Of ModuleElement)
+    Public Property Modules() As List(Of ModuleElement)
+        Get
+            Return m_Modules
+        End Get
+        Set(ByVal value As List(Of ModuleElement))
+            m_Modules = value
+        End Set
+    End Property
     Private m_ElementTwo As ModuleElement
     Public Property ElementTwo() As ModuleElement
         Get
@@ -959,46 +1008,75 @@ Public Class FilterModule
         NumFiltersWide = Convert.ToInt32(v1.Replace(" ul", String.Empty))
         NumFiltersHigh = Convert.ToInt32(v2.Replace(" ul", String.Empty))
         NumFiltrationStages = Convert.ToInt32(v3.Replace(" ul", String.Empty))
+        Modules = New List(Of ModuleElement)
         'should be set programatically?
         'NumElementsWide = Convert.ToInt32(v4.Replace(" ul", String.Empty))
         Select Case NumFiltersWide
             Case 7
                 ElementOne = New FourWideElement(ElementPosn:=1)
                 ElementTwo = New ThreeWideElement(ElementPosn:=2)
+                Modules.Add(ElementOne)
+                Modules.Add(ElementTwo)
             Case 8
                 ElementOne = New FourWideElement(ElementPosn:=1)
                 ElementTwo = New FourWideElement(ElementPosn:=2)
+                Modules.Add(ElementOne)
+                Modules.Add(ElementTwo)
             Case 9
                 ElementOne = New ThreeWideElement(ElementPosn:=1)
                 ElementTwo = New ThreeWideElement(ElementPosn:=2)
                 ElementThree = New ThreeWideElement(ElementPosn:=3)
+                Modules.Add(ElementOne)
+                Modules.Add(ElementTwo)
+                Modules.Add(ElementThree)
             Case 10
                 ElementOne = New ThreeWideElement(ElementPosn:=1)
                 ElementTwo = New FourWideElement(ElementPosn:=2)
                 ElementThree = New ThreeWideElement(ElementPosn:=3)
+                Modules.Add(ElementOne)
+                Modules.Add(ElementTwo)
+                Modules.Add(ElementThree)
             Case 11
                 ElementOne = New FourWideElement(ElementPosn:=1)
                 ElementTwo = New ThreeWideElement(ElementPosn:=2)
                 ElementThree = New FourWideElement(ElementPosn:=3)
+                Modules.Add(ElementOne)
+                Modules.Add(ElementTwo)
+                Modules.Add(ElementThree)
             Case 12
                 ElementOne = New FourWideElement(ElementPosn:=1)
                 ElementTwo = New FourWideElement(ElementPosn:=2)
                 ElementThree = New FourWideElement(ElementPosn:=3)
+                Modules.Add(ElementOne)
+                Modules.Add(ElementTwo)
+                Modules.Add(ElementThree)
             Case 13
                 ElementOne = New ThreeWideElement(ElementPosn:=1)
                 ElementTwo = New ThreeWideElement(ElementPosn:=2)
                 ElementThree = New FourWideElement(ElementPosn:=3)
                 ElementFour = New ThreeWideElement(ElementPosn:=4)
+                Modules.Add(ElementOne)
+                Modules.Add(ElementTwo)
+                Modules.Add(ElementThree)
+                Modules.Add(ElementFour)
             Case 14
                 ElementOne = New ThreeWideElement(ElementPosn:=1)
                 ElementTwo = New FourWideElement(ElementPosn:=2)
                 ElementThree = New FourWideElement(ElementPosn:=3)
                 ElementFour = New ThreeWideElement(ElementPosn:=4)
+                Modules.Add(ElementOne)
+                Modules.Add(ElementTwo)
+                Modules.Add(ElementThree)
+                Modules.Add(ElementFour)
             Case 15
                 ElementOne = New FourWideElement(ElementPosn:=1)
                 ElementTwo = New ThreeWideElement(ElementPosn:=2)
                 ElementThree = New FourWideElement(ElementPosn:=3)
                 ElementFour = New FourWideElement(ElementPosn:=4)
+                Modules.Add(ElementOne)
+                Modules.Add(ElementTwo)
+                Modules.Add(ElementThree)
+                Modules.Add(ElementFour)
         End Select
 
 
