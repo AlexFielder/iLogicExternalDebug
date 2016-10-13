@@ -73,9 +73,14 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Car.vb" />
     <Compile Include="Class1.vb" />
+    <Compile Include="Dummy.vb" />
     <Compile Include="Extensions.vb" />
     <Compile Include="FilterElements.designer.vb" />
+    <Compile Include="Hole.vb" />
+    <Compile Include="HolePattern.vb" />
+    <Compile Include="Minivan.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -91,6 +96,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="SheetMetal.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
@@ -103,6 +109,8 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagramTest.cd" />
+    <None Include="FHouse Mk2.cd" />
     <None Include="FilterElements.xsd">
       <SubType>Designer</SubType>
     </None>

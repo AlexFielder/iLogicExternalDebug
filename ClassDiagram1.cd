@@ -3,47 +3,47 @@
   <Class Name="iLogicExternalDebug.FilterModule">
     <Position X="11.5" Y="1.25" Width="2" />
     <TypeIdentifier>
-      <HashCode>EAABEAAABAIECJAAACAgIAAAkhAAAAQAAKAAAAAAAIA=</HashCode>
+      <HashCode>EAABEAAABAIECJAAAiAgIABQkhABAAQAALAAAAAACIA=</HashCode>
       <FileName>Class1.vb</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="iLogicExternalDebug.FourWideElement">
-    <Position X="14.25" Y="3.25" Width="1.5" />
+    <Position X="15.25" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Class1.vb</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="iLogicExternalDebug.ExtClass">
-    <Position X="7.25" Y="3" Width="2.75" />
+    <Position X="2.25" Y="3" Width="2.75" />
     <TypeIdentifier>
       <HashCode>EAQAAAAYAAIEABgAAAQBAABQAFBAAEAIAAAAIEAAEIY=</HashCode>
       <FileName>Class1.vb</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="iLogicExternalDebug.iProperties">
-    <Position X="3.5" Y="3.5" Width="1.5" />
+    <Position X="3" Y="0.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>IAAAAAAAAAAAAAAAAAAAAAABAAAAEAAAIAAAAAAAAAA=</HashCode>
       <FileName>Class1.vb</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="iLogicExternalDebug.Parameters">
-    <Position X="1.25" Y="3.25" Width="1.5" />
+    <Position X="1.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAQAQAABIAAAAAAAAAAEAAAAAABgAAAAAAAAAAAAAA=</HashCode>
       <FileName>Class1.vb</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="iLogicExternalDebug.SheetMetal">
-    <Position X="3" Y="1.5" Width="1.5" />
+    <Position X="4.75" Y="1" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ABAAAAAAAAAAAAAAAAAAAAAACAQAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Class1.vb</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="iLogicExternalDebug.ThreeWideElement">
-    <Position X="16" Y="3.25" Width="1.5" />
+    <Position X="15.25" Y="5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Class1.vb</FileName>

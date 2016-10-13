@@ -104,55 +104,6 @@ Public Class ExtClass
             Element2NumFilters.Value = thisModule.ElementTwo.NumFilters
             Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", thisModule.NumElementsWide)
 
-            'Select Case NumFiltersWide.Value
-            '    Case 7
-            '        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "2 ul")
-            '        Element1NumFilters.Value = 4
-            '        Element2NumFilters.Value = 3
-            '    Case 8
-            '        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "2 ul")
-            '        Element1NumFilters.Value = 4
-            '        Element2NumFilters.Value = 4
-            '    Case 9
-            '        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
-            '        Element1NumFilters.Value = 3
-            '        Element2NumFilters.Value = 3
-            '        Element3NumFilters.Value = 3
-            '    Case 10
-            '        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
-            '        Element1NumFilters.Value = 3
-            '        Element2NumFilters.Value = 4
-            '        Element3NumFilters.Value = 3
-            '    Case 11
-            '        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
-            '        Element1NumFilters.Value = 4
-            '        Element2NumFilters.Value = 3
-            '        Element3NumFilters.Value = 4
-            '    Case 12
-            '        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "3 ul")
-            '        Element1NumFilters.Value = 4
-            '        Element2NumFilters.Value = 4
-            '        Element3NumFilters.Value = 4
-            '    Case 13
-            '        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "4 ul")
-            '        Element1NumFilters.Value = 3
-            '        Element2NumFilters.Value = 3
-            '        Element3NumFilters.Value = 4
-            '        Element4NumFilters.Value = 3
-            '    Case 14
-            '        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "4 ul")
-            '        Element1NumFilters.Value = 3
-            '        Element2NumFilters.Value = 4
-            '        Element3NumFilters.Value = 4
-            '        Element4NumFilters.Value = 3
-            '    Case 15
-            '        Parameters.SetParameter(DocToUpdate.Document, "NumElementsWide", "4 ul")
-            '        Element1NumFilters.Value = 4
-            '        Element2NumFilters.Value = 3
-            '        Element3NumFilters.Value = 4
-            '        Element4NumFilters.Value = 4
-            'End Select
-
             Select Case NumFiltrationStages.Value
                 Case 2
 
@@ -1133,76 +1084,7 @@ Public Class FilterModule
 End Class
 #Region "Helper classes"
 
-Public Class SheetMetal
 
-    ''' <summary>
-    ''' Gets the currently active sheet metal style.
-    ''' </summary>
-    ''' <param name="Doc">The Inventor document to query</param>
-    ''' <returns></returns>
-    Public Shared Function GetCurrentSheetMetalStyle(ByVal Doc As Document) As SheetMetalStyle
-        'only works on part files that have a sheet metal definition
-        Dim SheetmetalDoc As PartDocument = Doc
-        Dim sheetmetalCompdef As SheetMetalComponentDefinition = SheetmetalDoc.ComponentDefinition
-        If Not sheetmetalCompdef Is Nothing Then
-            Return sheetmetalCompdef.ActiveSheetMetalStyle
-        Else
-            Return Nothing
-        End If
-    End Function
-
-    ''' <summary>
-    ''' This should let us set the currently active sheet metal style.
-    ''' </summary>
-    ''' <example>https://forums.autodesk.com/t5/inventor-customization/is-there-a-way-to-change-the-sheet-metal-rule/td-p/2568127</example>
-    ''' <param name="StyleName">The style name we wish to set as active</param>
-    ''' <returns></returns>
-    Public Shared Function SetorCreateCurrentSheetMetalStyle(ByVal Doc As Document, ByVal StyleName As String) As SheetMetalStyle
-        If Not StyleName = String.Empty Then
-            Dim SheetmetalDoc As PartDocument = Doc
-            Dim sheetmetalCompdef As SheetMetalComponentDefinition = SheetmetalDoc.ComponentDefinition
-            If Not sheetmetalCompdef Is Nothing Then
-                Dim shtmetalstyle As SheetMetalStyle = (From style As SheetMetalStyle In sheetmetalCompdef.SheetMetalStyles
-                                                        Where style.Name = StyleName
-                                                        Select style).First()
-                If Not shtmetalstyle Is Nothing Then
-                    'the style to change to exists in the document.
-                    sheetmetalCompdef.SheetMetalStyles.Item(StyleName).Activate()
-                    Return shtmetalstyle
-                Else
-                    ' it doesn't exist and should be created.
-                    Return Nothing
-                End If
-
-            Else
-                Return Nothing
-            End If
-        Else
-            Return Nothing
-        End If
-    End Function
-
-    ''' <summary>
-    ''' Gets or sets the active kFactor based on a string input
-    ''' </summary>
-    ''' <param name="kFactor"></param>
-    ''' <returns></returns>
-    Public Shared Function GetorSetActiveKFactor(ByVal Doc As Document, ByVal kFactor As String) As String
-        Dim SheetmetalDoc As PartDocument = Doc
-        Dim sheetmetalCompdef As SheetMetalComponentDefinition = SheetmetalDoc.ComponentDefinition
-        If Not sheetmetalCompdef Is Nothing Then
-            Dim shtmetalstyle As SheetMetalStyle = sheetmetalCompdef.ActiveSheetMetalStyle
-            If Not kFactor.Equals(String.Empty) Then
-                shtmetalstyle.UnfoldMethod.kFactor = kFactor
-                Return shtmetalstyle.UnfoldMethod.kFactor
-            Else 'return the current
-                Return shtmetalstyle.UnfoldMethod.kFactor
-            End If
-        Else
-            Return String.Empty
-        End If
-    End Function
-End Class
 
 Public Class iProperties
 

@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="iLogicExternalDebug.Hole">
+    <Position X="0.5" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAACAQAKECCAwQAgACAAUAkAAQRAABAEAEAAgJGAAAA=</HashCode>
+      <FileName>Hole.vb</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="iLogicExternalDebug.HolePattern">
+    <Position X="2.75" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAJAIAAAEAAAAAAAAAAAAAAAAAAQAAAAAIACAAA=</HashCode>
+      <FileName>HolePattern.vb</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="iLogicExternalDebug.ConnectingHoleVertical">
+    <Position X="2.75" Y="4" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Hole.vb</FileName>
+      <NewMemberFileName>VerticalConnectingHole.vb</NewMemberFileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="iLogicExternalDebug.ConnectingHoleTransition">
+    <Position X="2.75" Y="5.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Hole.vb</FileName>
+      <NewMemberFileName>TransitionConnectingHole.vb</NewMemberFileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="iLogicExternalDebug.MountingHoleElement">
+    <Position X="2.75" Y="7" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Hole.vb</FileName>
+      <NewMemberFileName>ElementMountingHole.vb</NewMemberFileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="iLogicExternalDebug.SheetMetal">
+    <Position X="0.5" Y="8.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAAgAAIAAAAABAAASAQAAIAAAAIAAAAAAAA=</HashCode>
+      <FileName>SheetMetal.vb</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="iLogicExternalDebug.ConnectingHoleHorizontal">
+    <Position X="5" Y="5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Hole.vb</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="iLogicExternalDebug.ConnectingHoleInterModule">
+    <Position X="5" Y="6.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Hole.vb</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="iLogicExternalDebug.HolePattern4WideElement" Collapsed="true">
+    <Position X="6" Y="2.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>HolePattern.vb</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="iLogicExternalDebug.Dummy">
+    <Position X="9.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>Dummy.vb</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
