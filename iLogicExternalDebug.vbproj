@@ -17,7 +17,7 @@
     <DebugType>full</DebugType>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <OutputPath>..\..\..\..\..\Program Files\Autodesk\Inventor 2016\Bin\iLogicAdd\</OutputPath>
+    <OutputPath>..\..\..\..\..\Program Files\Autodesk\Inventor 2017\Bin\iLogicAdd\</OutputPath>
     <DocumentationFile>iLogicExternalDebug.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
@@ -45,12 +45,15 @@
   <ItemGroup>
     <Reference Include="Autodesk.iLogic.Interfaces, Version=21.10.19900.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Program Files\Autodesk\Inventor 2016\Bin\Autodesk.iLogic.Interfaces.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\Autodesk\Inventor 2017\Bin\Autodesk.iLogic.Interfaces.dll</HintPath>
     </Reference>
     <Reference Include="Autodesk.Inventor.Interop, Version=21.1.0.0, Culture=neutral, PublicKeyToken=d84147f8b4276564, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>..\..\..\..\..\Program Files\Autodesk\Inventor 2016\Bin\Public Assemblies\Autodesk.Inventor.Interop.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

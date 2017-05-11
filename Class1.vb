@@ -1,7 +1,12 @@
-﻿Imports System.Windows.Forms
+﻿Option Explicit On
+Imports System.IO
+Imports System.Windows.Forms
 Imports Inventor
 Imports Autodesk.iLogic.Interfaces
 Imports iLogicExternalDebug
+Imports Microsoft.Office.Interop
+Imports Microsoft.Office.Interop.Excel
+Imports System.Runtime.InteropServices
 
 Public Class ExtClass
 #Region "Properties"
@@ -10,7 +15,11 @@ Public Class ExtClass
     ''' </summary>
     ''' <remarks></remarks>
     Public Shared m_inventorApplication As Inventor.Application
-
+    Private excelapp As Excel.Application
+    Private usedRange As Excel.Range
+    Private m_windowHandle As IntPtr
+    Private m_processID As IntPtr
+    Private Const ExcelWindowCaption As String = "Running From CAFE Tool O_o"
     ''' <summary>
     ''' the Inventor object populated by m_inventorApplication
     ''' </summary>
@@ -36,6 +45,146 @@ Public Class ExtClass
             m_DocToUpdate = value
         End Set
     End Property
+
+
+    'Imports Microsoft.office.interop.excel
+    Private Sub Main()
+        Call insertdummyfiles()
+    End Sub
+
+    Private Sub insertdummyfiles()
+        'define assembly
+        Dim linereached As Integer = 10
+        Dim asmDoc As AssemblyDocument
+        asmDoc = ThisApplication.ActiveDocument
+        'create a transaction to encapsulate all our additions in one undo.
+        Dim tr As Transaction
+        tr = ThisApplication.TransactionManager.StartTransaction(
+            ThisApplication.ActiveDocument,
+            "Create Standard Parts From Excel")
+        Try
+            excelapp = GetOrCreateInstance("Excel.Application")
+            Dim workBook As Workbook = Nothing
+            Dim workSheet As Worksheet = Nothing
+            Dim ProjectRootFolder As String = ThisApplication.DesignProjectManager.ActiveDesignProject.WorkspacePath
+            Dim excelFilename As String = ProjectRootFolder & "\QuantifiableParts.xlsx"
+            workBook = excelapp.Workbooks.Open(excelFilename)
+            workSheet = workBook.Worksheets(1)
+            'MessageBox.Show(excelfilename)
+            linereached = 22
+            Dim COTSPrefix As String = "COTS-"
+            Dim COTSPartNumStart As Long = 100000
+            Dim ItemNo As Integer = 200
+            'commented whilst debugging
+            '	Dim folderbrowser As New System.Windows.Forms.FolderBrowserDialog()
+            '	folderbrowser.RootFolder = System.Environment.SpecialFolder.MyComputer
+            '	folderbrowser.Description = "Select Folder to look for files to process."
+            '	folderbrowser.ShowDialog()
+            '	Dim SelectedProjectFolder As String = folderbrowser.selectedpath
+            Dim SelectedProjectFolder As String = "C:\Users\Alex.Fielder\OneDrive\Inventor\Designs\Test"
+            If SelectedProjectFolder Is Nothing Then Exit Sub
+            Dim COTSInitialPrefix As String = InputBox("What number do you want to start at?", "Title", CStr(COTSPartNumStart))
+            GoExcel.Open(excelFilename, "Sheet1")
+            linereached = 36
+            'get iProperties from the XLS file
+            For MyRow = 3 To 1000 'index row 3 through 1000
+                linereached = 39
+                If GoExcel.CellValue("E" & MyRow) = "" Then
+                    ItemNo += 100
+                    ItemNo = GetRoundNum(ItemNo, 100)
+                    Continue For
+                End If
+                linereached = 45
+                Dim PartNum As String = COTSPrefix & (Convert.ToInt32(COTSInitialPrefix) + ItemNo)
+                'GoExcel.CellValue("B" & MyRow)	'PART NUMBER
+                Dim Quantity As Double
+                If GoExcel.CellValue("C" & MyRow) = "" Then
+                    Quantity = 1
+                Else
+                    Quantity = GoExcel.CellValue("C" & MyRow)   'UNIT QUANTITY	
+                End If
+                linereached = 54
+                Dim Description As String = GoExcel.CellValue("F" & MyRow) & " - " & GoExcel.CellValue("H" & MyRow) 'DESIGNATION & " - " & DESCRIPTION
+                'Dim iProp6 as String = GoExcel.CellValue("F" & MyRow)	'VENDOR
+                'Dim iProp7 as String = GoExcel.CellValue("G" & MyRow)	'REV
+                'Dim iProp8 as String = GoExcel.CellValue("H" & MyRow)	'COMMENTS
+                'Dim ItemNo As String = GoExcel.CellValue("I" & MyRow)	'ITEM NUMBER
+                'Dim iProp10 as String = GoExcel.CellValue("K" & MyRow)	'SUBJECT/LEGACY DRAWING NUMBER
+                Dim occs As ComponentOccurrences
+                occs = asmDoc.ComponentDefinition.Occurrences
+                'sets up a Matrix based on the origin of the Assembly - we could translate each insert away from 0,0,0 but there's no real need to do that.
+                Dim PosnMatrix As Matrix
+                PosnMatrix = ThisApplication.TransientGeometry.CreateMatrix
+                linereached = 66
+                Dim basefilename = ProjectRootFolder & "\Graitec\DT-PINK_DISC-000.ipt"
+                Dim newfilename As String = SelectedProjectFolder & "\" & PartNum & ".ipt"
+                '		MessageBox.Show(newfilename, "Title") 'for debuggering!
+                '		Exit Sub
+                If Not System.IO.File.Exists(newfilename) Then 'we need to create it
+                    updatestatusbar("Creating " & newfilename)
+                    System.IO.File.Copy(basefilename, newfilename)
+                End If
+                linereached = 75
+                'creates a componentoccurence object
+                Dim realOcc As ComponentOccurrence
+                'and adds it at the origin of the assembly.
+                realOcc = occs.Add(newfilename, PosnMatrix)
+                Dim realOccStr As String = realOcc.Name
+                'Assign iProperties
+                iProperties.Value(realOccStr, "Project", "Description") = Description
+                iProperties.Value(realOccStr, "Project", "Part Number") = PartNum
+                iProperties.Value(realOccStr, "Project", "Revision Number") = "A"
+                'End Assign iProperties
+                linereached = 86
+                realOcc.Visible = False 'hide the first instance
+                Dim index As Integer
+                index = 2
+                Do While index <= CInt(Quantity)
+                    Dim tmpOcc As ComponentOccurrence
+                    tmpOcc = occs.AddByComponentDefinition(realOcc.Definition, PosnMatrix)
+                    tmpOcc.Visible = False ' and all subsequent occurrences.
+                    index += 1
+                Loop
+                COTSPartNumStart += 1
+                linereached = 97
+            Next
+        Catch
+            MessageBox.Show("Line reached: " & linereached)
+            tr.Abort()
+            InventorVb.DocumentUpdate()
+        Finally
+            tr.End()
+            InventorVb.DocumentUpdate()
+        End Try
+    End Sub
+
+    Private Function GetOrCreateInstance(appName As String) As Excel.Application
+        Try
+            Return GetInstance(appName)
+        Catch ex As Exception
+            Return CreateInstance(appName)
+        End Try
+    End Function
+
+    Private Function CreateInstance(appName As String) As Excel.Application
+        Return Activator.CreateInstance(Type.GetTypeFromProgID(appName))
+    End Function
+
+    Private Function GetInstance(appName As String) As Excel.Application
+        Return Marshal.GetActiveObject(appName)
+    End Function
+
+    Private Function GetRoundNum(ByVal Number As Double, ByVal multiple As Integer) As Double
+        GetRoundNum = CInt(Number / multiple) * multiple
+    End Function
+    Sub updatestatusbar(ByVal message As String)
+        ThisApplication.StatusBarText = message
+    End Sub
+    Sub updatestatusbar(ByVal percent As Double, ByVal message As String)
+        ThisApplication.StatusBarText = message + " (" & percent.ToString("P1") + ")"
+    End Sub
+
+
     Public Sub Update()
 
 
