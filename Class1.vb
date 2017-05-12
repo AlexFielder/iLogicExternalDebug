@@ -132,16 +132,20 @@ Public Class ExtClass
     End Sub
 
     Private Sub ConvertBomRowItemsToAttributes()
-        Dim standardCCParts As AttributeSet = Nothing
+        Dim standardCCParts As AttributeSets = Nothing
         For Each item As BomRowItem In ccBomRowItems
-            standardCCParts = ThisApplication.ActiveDocument.AttributeSets.Add()
-            'standardCCParts = ThisApplication.ActiveDocument.AttributeSets.Add("CCPartNumberSet")
+            Dim bHasAttSet As Boolean = ThisApplication.ActiveDocument.AttributeSets.NameIsUsed("CCPartNumberSet")
+            If bHasAttSet Then
+                standardCCParts = ThisApplication.ActiveDocument.AttributeSets.Item("CCPartNumberSet")
+            Else
+                standardCCParts = ThisApplication.ActiveDocument.AttributeSets.Add("CCPartNumberSet")
+            End If
             Dim attributenames() As String = {"FileName, StandardPartNum"}
             Dim valueTypes() As ValueTypeEnum = {ValueTypeEnum.kStringType, ValueTypeEnum.kStringType}
             Dim attributeValues() As String = {item.Document, item.ItemNo.ToString}
             Dim standardCCPart As AttributeSet = standardCCParts.AddAttributes(attributenames, valueTypes, attributeValues, False)
-            'standardCCParts.Add("FileName", ValueTypeEnum.kStringType, item.Document)
-            'standardCCParts.Add("StandardPartNum", ValueTypeEnum.kStringType, item.ItemNo.ToString)
+            standardCCParts.Add("FileName", ValueTypeEnum.kStringType, item.Document)
+            standardCCParts.Add("StandardPartNum", ValueTypeEnum.kStringType, item.ItemNo.ToString)
         Next
     End Sub
 
