@@ -43,7 +43,7 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autodesk.iLogic.Interfaces, Version=21.10.19900.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Autodesk.iLogic.Interfaces, Version=22.0.11200.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files\Autodesk\Inventor 2017\Bin\Autodesk.iLogic.Interfaces.dll</HintPath>
     </Reference>
@@ -51,6 +51,10 @@
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>..\..\..\..\..\Program Files\Autodesk\Inventor 2016\Bin\Public Assemblies\Autodesk.Inventor.Interop.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -76,6 +80,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="bomRowItem.vb" />
     <Compile Include="Car.vb" />
     <Compile Include="Class1.vb" />
     <Compile Include="Dummy.vb" />
@@ -83,6 +88,7 @@
     <Compile Include="FilterElements.designer.vb" />
     <Compile Include="Hole.vb" />
     <Compile Include="HolePattern.vb" />
+    <Compile Include="Log4NetFileHelper.vb" />
     <Compile Include="Minivan.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
@@ -117,6 +123,7 @@
     <None Include="FilterElements.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Log4Net.config" />
     <None Include="Module.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -129,6 +136,7 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
