@@ -68,12 +68,13 @@ Public Class ExtClass
     End Sub
     Private Sub CheckForReuseAndClearExistingAttributes()
         Dim existingAttributes As ObjectCollection =
-            ThisApplication.ActiveDocument.AttributeManager.FindObjects("CCPartNumberSet", "*")
+            ThisApplication.ActiveDocument.AttributeManager.FindObjects("*", "StandardPartNum")
         If Not existingAttributes.Count = 0 Then
             ccBomRowItems = New List(Of BomRowItem)
             For i = 1 To existingAttributes.Count
                 If TypeOf (existingAttributes(i)) Is Document Then
-                    Dim attSet As AttributeSet = existingAttributes(i)
+                    Dim thisDoc As Document = existingAttributes(i)
+                    Dim attSet As AttributeSet = thisDoc.AttributeSets.Item(1)
                     Dim filename As Attribute = attSet("FileName")
                     Dim partno As Attribute = attSet("StandardPartNum")
                     Dim existingItem As New BomRowItem() With {
@@ -132,20 +133,22 @@ Public Class ExtClass
     End Sub
 
     Private Sub ConvertBomRowItemsToAttributes()
-        Dim standardCCParts As AttributeSets = Nothing
+        Dim standardCCPartAttSet As AttributeSet = Nothing
         For Each item As BomRowItem In ccBomRowItems
-            Dim bHasAttSet As Boolean = ThisApplication.ActiveDocument.AttributeSets.NameIsUsed("CCPartNumberSet")
+            Dim bHasAttSet As Boolean = ThisApplication.ActiveDocument.AttributeSets.NameIsUsed("CCPartNumberSet" & item.ItemNo.ToString())
             If bHasAttSet Then
-                standardCCParts = ThisApplication.ActiveDocument.AttributeSets.Item("CCPartNumberSet")
+                'standardCCPartAttSet = ThisApplication.ActiveDocument.AttributeSets.Add("CCPartNumberSet" & item.ItemNo.ToString())
+                standardCCPartAttSet = ThisApplication.ActiveDocument.AttributeSets.Item("CCPartNumberSet" & item.ItemNo.ToString())
             Else
-                standardCCParts = ThisApplication.ActiveDocument.AttributeSets.Add("CCPartNumberSet")
+                standardCCPartAttSet = ThisApplication.ActiveDocument.AttributeSets.Add("CCPartNumberSet" & item.ItemNo.ToString())
             End If
-            Dim attributenames() As String = {"FileName, StandardPartNum"}
-            Dim valueTypes() As ValueTypeEnum = {ValueTypeEnum.kStringType, ValueTypeEnum.kStringType}
-            Dim attributeValues() As String = {item.Document, item.ItemNo.ToString}
-            Dim standardCCPart As AttributeSet = standardCCParts.AddAttributes(attributenames, valueTypes, attributeValues, False)
-            standardCCParts.Add("FileName", ValueTypeEnum.kStringType, item.Document)
-            standardCCParts.Add("StandardPartNum", ValueTypeEnum.kStringType, item.ItemNo.ToString)
+            'Dim attributenames() As String = {"FileName, StandardPartNum"}
+            'Dim valueTypes() As ValueTypeEnum = {ValueTypeEnum.kStringType, ValueTypeEnum.kStringType}
+            'Dim attributeValues() As String = {item.Document, item.ItemNo.ToString}
+            'Dim standardCCPartAttEnum As AttributesEnumerator = standardCCPartAttSet.AddAttributes(attributenames, valueTypes, attributeValues, False)
+            'Dim standardCCPart As AttributeSet = standardCCPartAttSet.AddAttributes(attributenames, valueTypes, attributeValues, False)
+            standardCCPartAttSet.Add("FileName", ValueTypeEnum.kStringType, item.Document)
+            standardCCPartAttSet.Add("StandardPartNum", ValueTypeEnum.kStringType, item.ItemNo.ToString)
         Next
     End Sub
 
