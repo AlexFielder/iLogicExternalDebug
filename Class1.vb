@@ -68,7 +68,7 @@ Public Class ExtClass
     End Sub
     Private Sub CheckForReuseAndClearExistingAttributes()
         Dim existingAttributes As ObjectCollection =
-            ThisApplication.ActiveDocument.AttributeManager.FindObjects("*", "StandardPartNum")
+            ThisApplication.ActiveDocument.AttributeManager.FindObjects("CCPartNumberSet*")
         If Not existingAttributes.Count = 0 Then
             ccBomRowItems = New List(Of BomRowItem)
             For i = 1 To existingAttributes.Count
@@ -123,6 +123,7 @@ Public Class ExtClass
                             ccBomRowItems.Add(New BomRowItem() With {
                                               .Document = doc.FullFileName,
                                               .ItemNo = Convert.ToInt32(ItemNo)})
+                            ItemNo += 1
                         End If
                     Next
                 End If
@@ -139,16 +140,17 @@ Public Class ExtClass
             If bHasAttSet Then
                 'standardCCPartAttSet = ThisApplication.ActiveDocument.AttributeSets.Add("CCPartNumberSet" & item.ItemNo.ToString())
                 standardCCPartAttSet = ThisApplication.ActiveDocument.AttributeSets.Item("CCPartNumberSet" & item.ItemNo.ToString())
+                'should maybe verify whether the values match what has been captured?
             Else
                 standardCCPartAttSet = ThisApplication.ActiveDocument.AttributeSets.Add("CCPartNumberSet" & item.ItemNo.ToString())
+                standardCCPartAttSet.Add("FileName", ValueTypeEnum.kStringType, item.Document)
+                standardCCPartAttSet.Add("StandardPartNum", ValueTypeEnum.kStringType, item.ItemNo.ToString)
             End If
             'Dim attributenames() As String = {"FileName, StandardPartNum"}
             'Dim valueTypes() As ValueTypeEnum = {ValueTypeEnum.kStringType, ValueTypeEnum.kStringType}
             'Dim attributeValues() As String = {item.Document, item.ItemNo.ToString}
             'Dim standardCCPartAttEnum As AttributesEnumerator = standardCCPartAttSet.AddAttributes(attributenames, valueTypes, attributeValues, False)
             'Dim standardCCPart As AttributeSet = standardCCPartAttSet.AddAttributes(attributenames, valueTypes, attributeValues, False)
-            standardCCPartAttSet.Add("FileName", ValueTypeEnum.kStringType, item.Document)
-            standardCCPartAttSet.Add("StandardPartNum", ValueTypeEnum.kStringType, item.ItemNo.ToString)
         Next
     End Sub
 
@@ -190,8 +192,10 @@ Public Class ExtClass
                                  ByRef iLeafNodes As Long,
                                  ByRef iSubAssemblies As Long)
         Try
-            Dim oSubCompOcc As ComponentOccurrence
-            For Each oSubCompOcc In oCompOcc.SubOccurrences
+            For Each oSubCompOcc As ComponentOccurrence In oCompOcc.SubOccurrences
+                If oSubCompOcc.BOMStructure = BOMStructureEnum.kReferenceBOMStructure Then
+                    Continue For
+                End If
                 ' Check if it's child occurrence (leaf node)
                 If oSubCompOcc.SubOccurrences.Count = 0 Then
                     'Debug.Print oSubCompOcc.Name
@@ -224,6 +228,9 @@ Public Class ExtClass
                 For Each row As BOMRow In ThisAssyBOMView.BOMRows
                     Dim RowCompDef As ComponentDefinition = row.ComponentDefinitions(1)
                     Dim thisDoc As Document = RowCompDef.Document
+                    If row.Promoted Then
+                        log.Info(thisDoc.FullFileName & " is Promoted!")
+                    End If
                     Dim matchingStoredDocument As BomRowItem = (From m As BomRowItem In ccBomRowItems
                                                                 Where m.Document = thisDoc.FullFileName
                                                                 Select m).FirstOrDefault()
@@ -1089,394 +1096,16 @@ Public Class ExtClass
     '#End Region
 End Class
 
-'Public Class ModuleElement
-'    Public Property ElementPosition As Integer
-'        Get
-'            Return _elementPosition
-'        End Get
-'        Set(value As Integer)
-'            _elementPosition = value
-'        End Set
-'    End Property
-
-'    Private _elementPosition As Integer
-
-'    Public Sub New(ElementPosn As Integer)
-'        ElementPosition = ElementPosn
-'    End Sub
-
-'    Private m_Pattern1Start As String
-'    Public Property Pattern1Start() As String
-'        Get
-'            Return m_Pattern1Start
-'        End Get
-'        Set(ByVal value As String)
-'            m_Pattern1Start = value
-'        End Set
-'    End Property
-
-'    Private m_Pattern1Spacing As String
-'    Public Property Pattern1Spacing() As String
-'        Get
-'            Return m_Pattern1Spacing
-'        End Get
-'        Set(ByVal value As String)
-'            m_Pattern1Spacing = value
-'        End Set
-'    End Property
-
-'    Private m_Pattern2Start As String
-'    Public Property Pattern2Start() As String
-'        Get
-'            Return m_Pattern2Start
-'        End Get
-'        Set(ByVal value As String)
-'            m_Pattern2Start = value
-'        End Set
-'    End Property
-
-'    Private m_Pattern2Spacing As String
-'    Public Property Pattern2Spacing() As String
-'        Get
-'            Return m_Pattern2Spacing
-'        End Get
-'        Set(ByVal value As String)
-'            m_Pattern2Spacing = value
-'        End Set
-'    End Property
-
-'    Private m_NumFilters As String
-'    Public Property NumFilters() As String
-'        Get
-'            Return m_NumFilters
-'        End Get
-'        Set(ByVal value As String)
-'            m_NumFilters = value
-'        End Set
-'    End Property
-
-'    Private m_ElementMasterName As String
-'    Public Property ElementMasterName() As String
-'        Get
-'            Return m_ElementMasterName
-'        End Get
-'        Set(ByVal value As String)
-'            m_ElementMasterName = "MasterElement" & ElementPosition.ToString() & "NumFilters"
-'        End Set
-'    End Property
-'    'Public MustOverride Function GetDefaultPatternSpacing() As List(Of String)
-'    'Public MustOverride Function GetDefaultPatternStartPosition() As List(Of String)
-'    'Public MustOverride Function GetDefaultPatternNumSlots() As Integer
-'    Public Function DefaultPattern1Spacing() As Integer
-
-'        Return 0
-'    End Function
-
-'    Public Function DefaultSlotPatternSpacing() As String
-'        Select Case ElementPosition
-'            Case 1
-
-'            Case 2
-
-'            Case 3
-
-'            Case 4
-
-
-'            Case Else
-
-'        End Select
-
-'        Return 0
-'    End Function
-'End Class
-
-'Public MustInherit Class ModuleStage
-'    Private m_StageDepth As String
-'    Public Property Depth() As String
-'        Get
-'            Return m_StageDepth
-'        End Get
-'        Set(ByVal value As String)
-'            m_StageDepth = value
-'        End Set
-'    End Property
-'    Private m_NumBottomSlots As String
-'    Public Property NumBottomSlots() As String
-'        Get
-'            Return m_NumBottomSlots
-'        End Get
-'        Set(ByVal value As String)
-'            m_NumBottomSlots = value
-'        End Set
-'    End Property
-
-'    Private m_NumSideSlots As String
-'    Public Property NumSideSlots() As String
-'        Get
-'            Return m_NumSideSlots
-'        End Get
-'        Set(ByVal value As String)
-'            m_NumSideSlots = value
-'        End Set
-'    End Property
-'End Class
-
-'Public Class TwoStageFiltration
-'    Inherits ModuleStage
-
-'End Class
-
-'Public Class ThreeStageFiltration
-'    Inherits ModuleStage
-
-'End Class
-
-'Public Class FourStageFiltration
-'    Inherits ModuleStage
-
-'End Class
-'Public Class ThreeWideElement
-'    Inherits ModuleElement
-
-'    Public Sub New(ElementPosn As Integer)
-'        MyBase.New(ElementPosn)
-'    End Sub
-'End Class
-
-'Public Class FourWideElement
-'    Inherits ModuleElement
-
-'    Public Sub New(ElementPosn As Integer)
-'        MyBase.New(ElementPosn)
-'    End Sub
-'End Class
-
-'Public Class FilterModule
-
-'    Public Property MaxNumFiltersWide As Integer = 15
-
-'    Private m_NumFiltersThisModule As Integer
-'    Public Property NumFiltersThisModule() As Integer
-'        Get
-'            Return m_NumFiltersThisModule
-'        End Get
-'        Set(ByVal value As Integer)
-'            m_NumFiltersThisModule = value
-'        End Set
-'    End Property
-'    Private m_IsLeftModule As Boolean
-'    Public Property IsLeftModule() As Boolean
-'        Get
-'            Return m_IsLeftModule
-'        End Get
-'        Set(ByVal value As Boolean)
-'            m_IsLeftModule = value
-'        End Set
-'    End Property
-'    Private m_ElementOne As ModuleElement
-'    Public Property ElementOne() As ModuleElement
-'        Get
-'            Return m_ElementOne
-'        End Get
-'        Set(ByVal value As ModuleElement)
-'            m_ElementOne = value
-'        End Set
-'    End Property
-'    Private m_Modules As List(Of ModuleElement)
-'    Public Property Modules() As List(Of ModuleElement)
-'        Get
-'            Return m_Modules
-'        End Get
-'        Set(ByVal value As List(Of ModuleElement))
-'            m_Modules = value
-'        End Set
-'    End Property
-'    Private m_ElementTwo As ModuleElement
-'    Public Property ElementTwo() As ModuleElement
-'        Get
-'            Return m_ElementTwo
-'        End Get
-'        Set(ByVal value As ModuleElement)
-'            m_ElementTwo = value
-'        End Set
-'    End Property
-
-'    Private m_ElementThree As ModuleElement
-'    Public Property ElementThree() As ModuleElement
-'        Get
-'            Return m_ElementThree
-'        End Get
-'        Set(ByVal value As ModuleElement)
-'            m_ElementThree = value
-'        End Set
-'    End Property
-
-'    Private m_ElementFour As ModuleElement
-'    Public Property ElementFour() As ModuleElement
-'        Get
-'            Return m_ElementFour
-'        End Get
-'        Set(ByVal value As ModuleElement)
-'            m_ElementFour = value
-'        End Set
-'    End Property
-
-'    Private m_NumElementsWide As Integer
-'    Public Property NumElementsWide() As Integer
-'        Get
-'            Return m_NumElementsWide
-'        End Get
-'        Set(ByVal value As Integer)
-'            m_NumElementsWide = value
-'        End Set
-'    End Property
-
-'    Private m_NumFiltrationStages As Integer
-'    Public Property NumFiltrationStages() As Integer
-'        Get
-'            Return m_NumFiltrationStages
-'        End Get
-'        Set(ByVal value As Integer)
-'            m_NumFiltrationStages = value
-'        End Set
-'    End Property
-
-'    Private m_StageOne As ModuleStage
-'    Public Property StageOne() As ModuleStage
-'        Get
-'            Return m_StageOne
-'        End Get
-'        Set(ByVal value As ModuleStage)
-'            m_StageOne = value
-'        End Set
-'    End Property
-
-
-'    Private m_StageTwo As ModuleStage
-'    Public Property StageTwo() As ModuleStage
-'        Get
-'            Return m_StageTwo
-'        End Get
-'        Set(ByVal value As ModuleStage)
-'            m_StageTwo = value
-'        End Set
-'    End Property
-
-'    Private m_NumFiltersHigh As Integer
-'    Public Property NumFiltersHigh() As Integer
-'        Get
-'            Return m_NumFiltersHigh
-'        End Get
-'        Set(ByVal value As Integer)
-'            m_NumFiltersHigh = value
-'        End Set
-'    End Property
-
-'    Private m_NumFiltersWide As Integer
-'    Public Property NumFiltersWide() As Integer
-'        Get
-'            Return m_NumFiltersWide
-'        End Get
-'        Set(ByVal value As Integer)
-'            m_NumFiltersWide = value
-'        End Set
-'    End Property
-
-
-
-'    Public Sub New(v1 As String, v2 As String, v3 As String, v4 As String)
-'        NumFiltersWide = Convert.ToInt32(v1.Replace(" ul", String.Empty))
-'        NumFiltersHigh = Convert.ToInt32(v2.Replace(" ul", String.Empty))
-'        NumFiltrationStages = Convert.ToInt32(v3.Replace(" ul", String.Empty))
-'        Modules = New List(Of ModuleElement)
-'        'should be set programatically?
-'        'NumElementsWide = Convert.ToInt32(v4.Replace(" ul", String.Empty))
-'        Select Case NumFiltersWide
-'            Case 7
-'                ElementOne = New FourWideElement(ElementPosn:=1)
-'                ElementTwo = New ThreeWideElement(ElementPosn:=2)
-'                Modules.Add(ElementOne)
-'                Modules.Add(ElementTwo)
-'            Case 8
-'                ElementOne = New FourWideElement(ElementPosn:=1)
-'                ElementTwo = New FourWideElement(ElementPosn:=2)
-'                Modules.Add(ElementOne)
-'                Modules.Add(ElementTwo)
-'            Case 9
-'                ElementOne = New ThreeWideElement(ElementPosn:=1)
-'                ElementTwo = New ThreeWideElement(ElementPosn:=2)
-'                ElementThree = New ThreeWideElement(ElementPosn:=3)
-'                Modules.Add(ElementOne)
-'                Modules.Add(ElementTwo)
-'                Modules.Add(ElementThree)
-'            Case 10
-'                ElementOne = New ThreeWideElement(ElementPosn:=1)
-'                ElementTwo = New FourWideElement(ElementPosn:=2)
-'                ElementThree = New ThreeWideElement(ElementPosn:=3)
-'                Modules.Add(ElementOne)
-'                Modules.Add(ElementTwo)
-'                Modules.Add(ElementThree)
-'            Case 11
-'                ElementOne = New FourWideElement(ElementPosn:=1)
-'                ElementTwo = New ThreeWideElement(ElementPosn:=2)
-'                ElementThree = New FourWideElement(ElementPosn:=3)
-'                Modules.Add(ElementOne)
-'                Modules.Add(ElementTwo)
-'                Modules.Add(ElementThree)
-'            Case 12
-'                ElementOne = New FourWideElement(ElementPosn:=1)
-'                ElementTwo = New FourWideElement(ElementPosn:=2)
-'                ElementThree = New FourWideElement(ElementPosn:=3)
-'                Modules.Add(ElementOne)
-'                Modules.Add(ElementTwo)
-'                Modules.Add(ElementThree)
-'            Case 13
-'                ElementOne = New ThreeWideElement(ElementPosn:=1)
-'                ElementTwo = New ThreeWideElement(ElementPosn:=2)
-'                ElementThree = New FourWideElement(ElementPosn:=3)
-'                ElementFour = New ThreeWideElement(ElementPosn:=4)
-'                Modules.Add(ElementOne)
-'                Modules.Add(ElementTwo)
-'                Modules.Add(ElementThree)
-'                Modules.Add(ElementFour)
-'            Case 14
-'                ElementOne = New ThreeWideElement(ElementPosn:=1)
-'                ElementTwo = New FourWideElement(ElementPosn:=2)
-'                ElementThree = New FourWideElement(ElementPosn:=3)
-'                ElementFour = New ThreeWideElement(ElementPosn:=4)
-'                Modules.Add(ElementOne)
-'                Modules.Add(ElementTwo)
-'                Modules.Add(ElementThree)
-'                Modules.Add(ElementFour)
-'            Case 15
-'                ElementOne = New FourWideElement(ElementPosn:=1)
-'                ElementTwo = New ThreeWideElement(ElementPosn:=2)
-'                ElementThree = New FourWideElement(ElementPosn:=3)
-'                ElementFour = New FourWideElement(ElementPosn:=4)
-'                Modules.Add(ElementOne)
-'                Modules.Add(ElementTwo)
-'                Modules.Add(ElementThree)
-'                Modules.Add(ElementFour)
-'        End Select
-'        Select Case NumFiltrationStages
-'            Case 2
-'                StageOne = New TwoStageFiltration()
-'            Case 3
-
-'            Case 4
-
-'        End Select
-
-'    End Sub
-
-
-'End Class
 #Region "Helper classes"
 
 
 
 Public Class iProperties
+
+    Private thisAssembly As System.Reflection.Assembly = System.Reflection.Assembly.GetExecutingAssembly()
+    Private thisAssemblyPath As String = String.Empty
+    Private logHelper As Log4NetFileHelper = New Log4NetFileHelper()
+    Private Shared ReadOnly log As ILog = LogManager.GetLogger(GetType(iProperties))
 
     Public Shared Function GetiPropertyDisplayName(ByVal iProp As Inventor.Property) As String
         Return iProp.DisplayName
@@ -1608,30 +1237,38 @@ Public Class iProperties
         ' Get the custom property set.
         Dim customPropSet As Inventor.PropertySet
         Dim customproperty As Object = Nothing
-
-        customPropSet = Doc.PropertySets.Item("Inventor User Defined Properties")
-
-        ' Get the existing property, if it exists.
-        Dim prop As Inventor.Property = Nothing
-        Dim propExists As Boolean = True
         Try
-            prop = customPropSet.Item(PropertyName)
-        Catch ex As Exception
-            propExists = False
-        End Try
-        If Not PropertyValue Is Nothing Then
-            ' Check to see if the property was successfully obtained.
-            If Not propExists Then
-                ' Failed to get the existing property so create a new one.
-                prop = customPropSet.Add(PropertyValue, PropertyName)
+            customPropSet = Doc.PropertySets.Item("Inventor User Defined Properties")
+
+            ' Get the existing property, if it exists.
+            Dim prop As Inventor.Property = Nothing
+            Dim propExists As Boolean = True
+            Try
+                prop = customPropSet.Item(PropertyName)
+            Catch ex As Exception
+                propExists = False
+            End Try
+            If Not PropertyValue Is Nothing Then
+                ' Check to see if the property was successfully obtained.
+                If Not propExists Then
+                    ' Failed to get the existing property so create a new one.
+                    If Not Doc.FullFileName.Contains("Content Center") Then
+                        prop = customPropSet.Add(PropertyValue, PropertyName)
+                    End If
+                Else
+                    If Not prop Is Nothing Then ' avoids the error where the item *should* have the item number but perhaps doesn't because reasons!
+                        ' Change the value of the existing property.
+                        prop.Value = PropertyValue
+                    End If
+                End If
             Else
-                ' Change the value of the existing property.
-                prop.Value = PropertyValue
+                customproperty = prop.Value
             End If
-        Else
-            customproperty = prop.Value
-        End If
+        Catch ex As Exception
+            Log.Error(ex.Message, ex)
+        End Try
         Return customproperty
+
     End Function
 #End Region
 
