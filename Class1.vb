@@ -67,23 +67,38 @@ Public Class ExtClass
 
     End Sub
     Private Sub CheckForReuseAndClearExistingAttributes()
-        Dim existingAttributes As ObjectCollection =
-            ThisApplication.ActiveDocument.AttributeManager.FindObjects("CCPartNumberSet*")
-        If Not existingAttributes.Count = 0 Then
+        Dim attribSetEnum As AttributeSetsEnumerator = ThisApplication.ActiveDocument.AttributeManager.FindAttributeSets("CCPartNumberSet*")
+        'Dim existingAttributes As ObjectCollection =
+        '    ThisApplication.ActiveDocument.AttributeManager.FindObjects("CCPartNumberSet*")
+        If Not attribSetEnum.Count = 0 Then
             ccBomRowItems = New List(Of BomRowItem)
-            For i = 1 To existingAttributes.Count
-                If TypeOf (existingAttributes(i)) Is Document Then
-                    Dim thisDoc As Document = existingAttributes(i)
-                    Dim attSet As AttributeSet = thisDoc.AttributeSets.Item(1)
-                    Dim filename As Attribute = attSet("FileName")
-                    Dim partno As Attribute = attSet("StandardPartNum")
-                    Dim existingItem As New BomRowItem() With {
-                        .Document = filename.Value,
-                        .ItemNo = partno.Value}
-                    ccBomRowItems.Add(existingItem)
-                End If
+            For Each attSet As AttributeSet In attribSetEnum
+                Dim filename As Attribute = attSet("FileName")
+                Dim partno As Attribute = attSet("StandardPartNum")
+                Dim existingItem As New BomRowItem() With {
+                    .Document = filename.Value,
+                    .ItemNo = partno.Value}
+                ccBomRowItems.Add(existingItem)
             Next
         End If
+
+
+        'If Not existingAttributes.Count = 0 Then
+        '    ccBomRowItems = New List(Of BomRowItem)
+        '    'For i = 1 To existingAttributes.Count
+        '    '    If TypeOf (existingAttributes(i)) Is Document Then
+        '    Dim thisDoc As Document = existingAttributes(1)
+
+        '    Dim attSet As AttributeSet = thisDoc.AttributeSets.Item(1)
+        '    Dim filename As Attribute = attSet("FileName")
+        '    Dim partno As Attribute = attSet("StandardPartNum")
+        '    Dim existingItem As New BomRowItem() With {
+        '        .Document = filename.Value,
+        '        .ItemNo = partno.Value}
+        '    ccBomRowItems.Add(existingItem)
+        '    '    End If
+        '    'Next
+        'End If
     End Sub
 
     Private ccPartsList As List(Of Document) = Nothing
@@ -225,31 +240,64 @@ Public Class ExtClass
                 updatestatusbar("Processing: " & ParentAssyDoc.FullFileName)
                 AssyBom.StructuredViewFirstLevelOnly = True
                 Dim ThisAssyBOMView As BOMView = AssyBom.BOMViews.Item("Structured")
-                For Each row As BOMRow In ThisAssyBOMView.BOMRows
-                    Dim RowCompDef As ComponentDefinition = row.ComponentDefinitions(1)
-                    Dim thisDoc As Document = RowCompDef.Document
-                    If row.Promoted Then
-                        log.Info(thisDoc.FullFileName & " is Promoted!")
-                    End If
-                    Dim matchingStoredDocument As BomRowItem = (From m As BomRowItem In ccBomRowItems
-                                                                Where m.Document = thisDoc.FullFileName
-                                                                Select m).FirstOrDefault()
-                    If Not matchingStoredDocument Is Nothing Then
-                        log.Info("Assembly: " & IO.Path.GetFileName(ParentAssyDoc.FullFileName) &
-                                 " | Part: " & IO.Path.GetFileName(thisDoc.FullFileName) &
-                                 " Item No changed from: " & row.ItemNumber &
-                                 " to: " & matchingStoredDocument.ItemNo)
-                        row.ItemNumber = matchingStoredDocument.ItemNo
-                    Else
-                        If Not iProperties.SetorCreateCustomiProperty(thisDoc, "ItemNo") = String.Empty Then
-                            row.ItemNumber = iProperties.SetorCreateCustomiProperty(thisDoc, "ItemNo")
-                        End If
-                    End If
+                RenumberBOMViews(ParentAssyDoc, ThisAssyBOMView)
+                ThisAssyBOMView = AssyBom.BOMViews.Item("Parts Only")
+                RenumberBOMViews(ParentAssyDoc, ThisAssyBOMView)
 
-                Next
+                'For Each row As BOMRow In ThisAssyBOMView.BOMRows
+                '    Dim RowCompDef As ComponentDefinition = row.ComponentDefinitions(1)
+                '    Dim thisDoc As Document = RowCompDef.Document
+                '    If row.Promoted Then
+                '        log.Info(thisDoc.FullFileName & " is Promoted!")
+                '    End If
+                '    Dim matchingStoredDocument As BomRowItem = (From m As BomRowItem In ccBomRowItems
+                '                                                Where m.Document = thisDoc.FullFileName
+                '                                                Select m).FirstOrDefault()
+                '    If Not matchingStoredDocument Is Nothing Then
+                '        log.Info("Assembly: " & IO.Path.GetFileName(ParentAssyDoc.FullFileName) &
+                '                 " | Part: " & IO.Path.GetFileName(thisDoc.FullFileName) &
+                '                 " Item No changed from: " & row.ItemNumber &
+                '                 " to: " & matchingStoredDocument.ItemNo)
+                '        row.ItemNumber = matchingStoredDocument.ItemNo
+                '    Else
+                '        If Not iProperties.SetorCreateCustomiProperty(thisDoc, "ItemNo") = String.Empty Then
+                '            row.ItemNumber = iProperties.SetorCreateCustomiProperty(thisDoc, "ItemNo")
+                '        End If
+                '    End If
+
+                'Next
             End If
+        Catch ex As Exception
+            log.Error(ex.Message, ex)
+        End Try
+    End Sub
+
+    Public Sub RenumberBOMViews(ParentAssyDoc As Document, currentView As BOMView)
+        Try
 
 
+            For Each row As BOMRow In currentView.BOMRows
+                Dim RowCompDef As ComponentDefinition = row.ComponentDefinitions(1)
+                Dim thisDoc As Document = RowCompDef.Document
+                If row.Promoted Then
+                    log.Info(thisDoc.FullFileName & " is Promoted!")
+                End If
+                Dim matchingStoredDocument As BomRowItem = (From m As BomRowItem In ccBomRowItems
+                                                            Where m.Document = thisDoc.FullFileName
+                                                            Select m).FirstOrDefault()
+                If Not matchingStoredDocument Is Nothing Then
+                    log.Info("Assembly: " & IO.Path.GetFileName(ParentAssyDoc.FullFileName) &
+                             " | Part: " & IO.Path.GetFileName(thisDoc.FullFileName) &
+                             " Item No changed from: " & row.ItemNumber &
+                             " to: " & matchingStoredDocument.ItemNo)
+                    row.ItemNumber = matchingStoredDocument.ItemNo
+                Else
+                    If Not iProperties.SetorCreateCustomiProperty(thisDoc, "ItemNo") = String.Empty Then
+                        row.ItemNumber = iProperties.SetorCreateCustomiProperty(thisDoc, "ItemNo")
+                    End If
+                End If
+
+            Next
         Catch ex As Exception
             log.Error(ex.Message, ex)
         End Try
