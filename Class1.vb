@@ -8,6 +8,7 @@ Imports Microsoft.Office.Interop
 Imports Microsoft.Office.Interop.Excel
 Imports System.Runtime.InteropServices
 Imports log4net
+Imports System.Text.RegularExpressions
 
 Public Class ExtClass
     '#Region "Properties"
@@ -172,29 +173,32 @@ Public Class ExtClass
     Public Sub ProcessAllAssemblyOccurrences()
         Try
             Dim oDoc As Inventor.AssemblyDocument = ThisApplication.ActiveDocument
-            Dim AssyPartOccurrences As List(Of ComponentOccurrence) = Nothing
+            Dim AssySubAssemblies As List(Of Document) = Nothing
             Dim oCompDef As Inventor.ComponentDefinition = oDoc.ComponentDefinition
-            Dim sMsg As String
-            Dim iLeafNodes As Long
-            Dim iSubAssemblies As Long
-            ' Get all occurrences from component definition for Assembly document
+            'process this assembly
+            RenumberBomViews(oDoc.ComponentDefinition)
+            ' Get all referenced assemblies in one list
+            AssySubAssemblies = (From assyDoc As Document In oDoc.AllReferencedDocuments
+                                 Where TypeOf (assyDoc) Is AssemblyDocument
+                                 Select assyDoc).ToList()
+            For Each assy As Document In AssySubAssemblies
+                Dim ThisAssy As AssemblyDocument = assy
+                RenumberBomViews(ThisAssy.ComponentDefinition)
+            Next
             'AssyPartOccurrences = (From partDoc As ComponentOccurrence In oCompDef.Occurrences
             '                       Where TypeOf (partDoc.Definition.Document) Is PartDocument
             '                       Select partDoc).ToList()
 
 
-            For Each oCompOcc As ComponentOccurrence In oCompDef.Occurrences
-                If oCompOcc.SubOccurrences.Count = 0 Then
-                    iLeafNodes = iLeafNodes + 1
-                    RenumberBomOccurrences(oCompDef, oCompOcc)
-                Else
-                    iSubAssemblies = iSubAssemblies + 1
-                    Call processAllSubOcc(oCompOcc,
-                                    sMsg,
-                                    iLeafNodes,
-                                    iSubAssemblies)
-                End If
-            Next
+            'For Each oCompOcc As ComponentOccurrence In oCompDef.Occurrences
+            '    If oCompOcc._DisplayName.EndsWith(":1") Then
+            '        If oCompOcc.SubOccurrences.Count = 0 Then
+            '            RenumberBomOccurrences(oCompDef, oCompOcc)
+            '        Else
+            '            Call processAllSubOcc(oCompOcc)
+            '        End If
+            '    End If
+            'Next
         Catch ex As Exception
             log.Error(ex.Message, ex)
         End Try
@@ -202,35 +206,26 @@ Public Class ExtClass
 
     ' This function is called for processing sub assembly.  It is called recursively
     ' to iterate through the entire assembly tree.
-    Private Sub processAllSubOcc(ByVal oCompOcc As ComponentOccurrence,
-                                 ByRef sMsg As String,
-                                 ByRef iLeafNodes As Long,
-                                 ByRef iSubAssemblies As Long)
-        Try
-            For Each oSubCompOcc As ComponentOccurrence In oCompOcc.SubOccurrences
-                If oSubCompOcc.BOMStructure = BOMStructureEnum.kReferenceBOMStructure Then
-                    Continue For
-                End If
-                ' Check if it's child occurrence (leaf node)
-                If oSubCompOcc.SubOccurrences.Count = 0 Then
-                    'Debug.Print oSubCompOcc.Name
-                    RenumberBomOccurrences(oCompOcc.Definition, oSubCompOcc)
-                Else
-                    sMsg = sMsg + oSubCompOcc.Name + vbCr
-                    iSubAssemblies = iSubAssemblies + 1
+    'Private Sub processAllSubOcc(ByVal oCompOcc As ComponentOccurrence)
+    '    Try
+    '        For Each oSubCompOcc As ComponentOccurrence In oCompOcc.SubOccurrences
+    '            If oSubCompOcc.BOMStructure = BOMStructureEnum.kReferenceBOMStructure Then
+    '                Continue For
+    '            End If
+    '            ' Check if it's child occurrence (leaf node)
+    '            If oSubCompOcc.SubOccurrences.Count = 0 Then
+    '                'Debug.Print oSubCompOcc.Name
+    '                RenumberBomOccurrences(oCompOcc.Definition, oSubCompOcc)
+    '            Else
+    '                Call processAllSubOcc(oSubCompOcc)
+    '            End If
+    '        Next
+    '    Catch ex As Exception
+    '        log.Error(ex.Message, ex)
+    '    End Try
+    'End Sub
 
-                    Call processAllSubOcc(oSubCompOcc,
-                                          sMsg,
-                                          iLeafNodes,
-                                          iSubAssemblies)
-                End If
-            Next
-        Catch ex As Exception
-
-        End Try
-    End Sub
-
-    Private Sub RenumberBomOccurrences(parentAssyCompDef As AssemblyComponentDefinition, partOccurrence As ComponentOccurrence)
+    Private Sub RenumberBomViews(parentAssyCompDef As AssemblyComponentDefinition)
         Try
             Dim AssyBom As BOM = parentAssyCompDef.BOM
             Dim ParentAssyDoc As AssemblyDocument = parentAssyCompDef.Document
@@ -267,12 +262,27 @@ Public Class ExtClass
                              " to: " & matchingStoredDocument.ItemNo)
                     row.ItemNumber = matchingStoredDocument.ItemNo
                 Else
-                    If Not iProperties.SetorCreateCustomiProperty(thisDoc, "ItemNo") = String.Empty Then
-                        row.ItemNumber = iProperties.SetorCreateCustomiProperty(thisDoc, "ItemNo")
+                    'assumes we used 6 digits for our COTS numbering!
+                    If IO.Path.GetFileNameWithoutExtension(thisDoc.FullFileName).StartsWith("COTS") Then
+                        Dim COTSnumber As String = IO.Path.GetFileNameWithoutExtension(thisDoc.FullFileName)
+                        Dim COTSBase As Double = 0
+                        Dim regex As New Regex("(\d{6})")
+                        Dim f As String = String.Empty
+                        f = regex.Match(COTSnumber).Captures(0).ToString()
+                        COTSBase = GetRoundNum(Convert.ToDouble(f), 100000)
+                        Dim COTSNum As Double = Convert.ToDouble(f)
+                        Dim newItemNum As String = Convert.ToString(COTSNum - COTSBase)
+                        row.ItemNumber = newItemNum
+                    Else
+                        If Not iProperties.SetorCreateCustomiProperty(thisDoc, "ItemNo") = String.Empty Then
+                            row.ItemNumber = iProperties.SetorCreateCustomiProperty(thisDoc, "ItemNo")
+                        End If
                     End If
+
                 End If
 
             Next
+            currentView.Sort("Item", True)
         Catch ex As Exception
             log.Error(ex.Message, ex)
         End Try
