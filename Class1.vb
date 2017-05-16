@@ -185,45 +185,10 @@ Public Class ExtClass
                 Dim ThisAssy As AssemblyDocument = assy
                 RenumberBomViews(ThisAssy.ComponentDefinition)
             Next
-            'AssyPartOccurrences = (From partDoc As ComponentOccurrence In oCompDef.Occurrences
-            '                       Where TypeOf (partDoc.Definition.Document) Is PartDocument
-            '                       Select partDoc).ToList()
-
-
-            'For Each oCompOcc As ComponentOccurrence In oCompDef.Occurrences
-            '    If oCompOcc._DisplayName.EndsWith(":1") Then
-            '        If oCompOcc.SubOccurrences.Count = 0 Then
-            '            RenumberBomOccurrences(oCompDef, oCompOcc)
-            '        Else
-            '            Call processAllSubOcc(oCompOcc)
-            '        End If
-            '    End If
-            'Next
         Catch ex As Exception
             log.Error(ex.Message, ex)
         End Try
     End Sub
-
-    ' This function is called for processing sub assembly.  It is called recursively
-    ' to iterate through the entire assembly tree.
-    'Private Sub processAllSubOcc(ByVal oCompOcc As ComponentOccurrence)
-    '    Try
-    '        For Each oSubCompOcc As ComponentOccurrence In oCompOcc.SubOccurrences
-    '            If oSubCompOcc.BOMStructure = BOMStructureEnum.kReferenceBOMStructure Then
-    '                Continue For
-    '            End If
-    '            ' Check if it's child occurrence (leaf node)
-    '            If oSubCompOcc.SubOccurrences.Count = 0 Then
-    '                'Debug.Print oSubCompOcc.Name
-    '                RenumberBomOccurrences(oCompOcc.Definition, oSubCompOcc)
-    '            Else
-    '                Call processAllSubOcc(oSubCompOcc)
-    '            End If
-    '        Next
-    '    Catch ex As Exception
-    '        log.Error(ex.Message, ex)
-    '    End Try
-    'End Sub
 
     Private Sub RenumberBomViews(parentAssyCompDef As AssemblyComponentDefinition)
         Try
