@@ -173,14 +173,16 @@ Public Class ExtClass
     Public Sub ProcessAllAssemblyOccurrences()
         Try
             Dim oDoc As Inventor.AssemblyDocument = ThisApplication.ActiveDocument
-            Dim AssySubAssemblies As List(Of Document) = Nothing
+            Dim AssySubAssemblies As List(Of AssemblyDocument) = Nothing
             Dim oCompDef As Inventor.ComponentDefinition = oDoc.ComponentDefinition
             'process this assembly
             RenumberBomViews(oDoc.ComponentDefinition)
             ' Get all referenced assemblies in one list
             AssySubAssemblies = (From assyDoc As Document In oDoc.AllReferencedDocuments
                                  Where TypeOf (assyDoc) Is AssemblyDocument
-                                 Select assyDoc).ToList()
+                                 Let selectedDoc As AssemblyDocument = assyDoc
+                                 Where selectedDoc.ComponentDefinition.BOM.StructuredViewEnabled = True
+                                 Select selectedDoc).ToList()
             For Each assy As Document In AssySubAssemblies
                 Dim ThisAssy As AssemblyDocument = assy
                 RenumberBomViews(ThisAssy.ComponentDefinition)
