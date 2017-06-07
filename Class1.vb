@@ -1,5 +1,6 @@
 ﻿Option Explicit On
 Imports System.IO
+Imports System.Linq
 Imports System.Windows.Forms
 Imports Inventor
 Imports Autodesk.iLogic.Interfaces
@@ -52,6 +53,51 @@ Public Class ExtClass
             m_DocToUpdate = value
         End Set
     End Property
+
+#Region "SaveCopyAsFromBrowserNodeNames"
+
+    Public Sub SaveCopyAsFromBrowserNodeNames()
+        If TypeOf (ThisApplication.ActiveDocument) Is AssemblyDocument Then
+            Dim searchstring As String = InputBox("what are we searching for?", "Search string", "Default Entry")
+
+            If Not searchstring = String.Empty Then
+                Dim oDoc As AssemblyDocument = ThisApplication.ActiveDocument
+                Dim oPane As BrowserPane = oDoc.BrowserPanes("Model")
+                Dim oTopNode As BrowserNode = oPane.TopNode
+
+                Dim nodelist As List(Of String) = New List(Of String)
+
+                nodelist = (From a As BrowserNode In oTopNode.BrowserNodes
+                            Let nodedef As BrowserNodeDefinition = a.BrowserNodeDefinition
+                            Where nodedef.Label.Contains(searchstring)
+                            Select nodedef.Label).ToList()
+                ThisApplication.StatusBarText = searchstring
+
+                '	For Each node As browsernode In oTopnode.Browsernodes
+                '		Dim nodeDef as browsernodedefinition = node.browsernodedefinition
+                '		If nodedef.label.startswith(searchstring) Then
+                '			nodelist.add(nodedef.label)
+                '			
+                '		End If
+                '		MessageBox.Show("browser node: " & nodedef.label)
+                '	Next
+                If nodelist.Count > 0 Then
+                    Dim FolderName As String = System.IO.Path.GetDirectoryName(oDoc.FullFileName)
+                    Dim filename As String = System.IO.Path.GetFileNameWithoutExtension(oDoc.FullFileName)
+                    For Each nodename As String In nodelist
+                        Dim newfilename As String = FolderName & "\" & filename & "-" & nodename.Replace("°:1", "") & ".iam"
+                        'newfilename.Replace("°:","°-")
+                        MessageBox.Show(newfilename)
+                        If Not System.IO.File.Exists(newfilename) Then
+                            ThisApplication.ActiveDocument.SaveAs(newfilename, False)
+                        End If
+                    Next
+                End If
+            End If
+        End If
+    End Sub
+
+#End Region
 
 #Region "Renumber Item lists"
     Public Sub BeginRenumberItems()
