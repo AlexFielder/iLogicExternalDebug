@@ -53,6 +53,58 @@ Public Class ExtClass
             m_DocToUpdate = value
         End Set
     End Property
+#Region "Check iFactory for errors"
+    Public Sub CheckiPartTableForErrors()
+        Dim oErrorManager As ErrorManager = ThisApplication.ErrorManager
+
+        If TypeOf (ThisApplication.ActiveDocument) Is PartDocument Then
+            Dim oDoc As PartDocument = ThisApplication.ActiveDocument
+            Dim oiPart As iPartFactory = oDoc.ComponentDefinition.iPartFactory
+            Dim oTop As BrowserNode = oDoc.BrowserPanes("Model").TopNode
+            Dim bHasErrorOrWarning As Boolean
+            Dim i As Integer
+            'InventorVb.DocumentUpdate()
+            ThisApplication.SilentOperation = True
+            For i = 1 To oiPart.TableRows.Count 'use first 10 rows only for debugging purposes!
+                ' Highlight the 3rd iPart table row which has invalid data
+                oTop.BrowserNodes("Table").BrowserNodes.Item(i).DoSelect()
+
+                ' Activate the iPart table row
+                Dim oCommand As ControlDefinition = ThisApplication.CommandManager.ControlDefinitions("PartComputeiPartRowCtxCmd")
+                oCommand.Execute()
+
+                ThisApplication.SilentOperation = False
+                ThisApplication.CommandManager.ControlDefinitions.Item("AppZoomallCmd").Execute()
+
+                If oErrorManager.HasErrors Or oErrorManager.HasWarnings Then
+                    MessageBox.Show(oErrorManager.LastMessage, "Title")
+                End If
+            Next i
+            MessageBox.Show("No errors shown = None found!", "Title")
+        ElseIf TypeOf (ThisApplication.ActiveDocument) Is AssemblyDocument Then
+            Dim odoc As AssemblyDocument = ThisApplication.ActiveDocument
+            Dim iAssy As iAssemblyFactory = odoc.ComponentDefinition.iAssemblyFactory
+            Dim oTop As BrowserNode = odoc.BrowserPanes("Model").TopNode
+            Dim bHasErrorOrWarning As Boolean
+            Dim i As Integer
+            'InventorVb.DocumentUpdate()
+            ThisApplication.SilentOperation = True
+            For rowIndex = 1 To iAssy.TableRows.Count
+                oTop.BrowserNodes("Table").BrowserNodes.Item(rowIndex).DoSelect()
+                Dim oCommand As ControlDefinition = ThisApplication.CommandManager.ControlDefinitions("PartComputeiPartRowCtxCmd")
+                oCommand.Execute()
+                ThisApplication.SilentOperation = False
+                ThisApplication.CommandManager.ControlDefinitions.Item("AppZoomallCmd").Execute()
+
+                If oErrorManager.HasErrors Or oErrorManager.HasWarnings Then
+                    MessageBox.Show(oErrorManager.LastMessage, "Title")
+                End If
+
+            Next
+        End If
+    End Sub
+#End Region
+
 
 #Region "SaveCopyAsFromBrowserNodeNames"
 
