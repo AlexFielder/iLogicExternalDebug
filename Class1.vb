@@ -28,6 +28,12 @@ Public Class ExtClass
     Private logHelper As Log4NetFileHelper = New Log4NetFileHelper()
     Private Shared ReadOnly log As ILog = LogManager.GetLogger(GetType(ExtClass))
     Private Const ExcelWindowCaption As String = "Running From CAFE Tool O_o"
+
+    Public viewStateList As List(Of viewstate) = New List(Of viewstate)
+    Public Shared dwgDoc As DrawingDocument = Nothing
+    Public ActiveSht As Sheet = Nothing
+    Public oDrawingViews As DrawingViews = Nothing
+
     ''' <summary>
     ''' the Inventor object populated by m_inventorApplication
     ''' </summary>
@@ -53,6 +59,156 @@ Public Class ExtClass
             m_DocToUpdate = value
         End Set
     End Property
+
+#Region "Align drawing views"
+
+    Public Sub BeginAlignDrawingviews()
+        thisAssemblyPath = System.IO.Path.GetDirectoryName(thisAssembly.Location)
+        logHelper.Init()
+        logHelper.AddConsoleLogging()
+        'the next line works but we want a rolling log.
+        logHelper.AddFileLogging(System.IO.Path.Combine(thisAssemblyPath, "GraitecExtensionsServer.log"))
+        logHelper.AddFileLogging("C:\Logs\MyLogFile.txt", log4net.Core.Level.All, True)
+        logHelper.AddRollingFileLogging("C:\Logs\RollingFileLog.txt", log4net.Core.Level.All, True)
+        log.Debug("Loading iLogic External Debug for align drawing views")
+        aligndrawingviews()
+
+    End Sub
+    Sub aligndrawingviews()
+        'set up logging
+        logHelper.Init()
+        logHelper.AddRollingFileLogging("C:\Logs\RollingFileLog.txt", log4net.Core.Level.All, True)
+        log.Debug("logging from iLogic, who'd have thought it!?")
+        If Not TypeOf (ThisApplication.ActiveDocument) Is DrawingDocument Then
+            log.Error("Drawing not active!")
+            Exit Sub
+        End If
+        dwgDoc = ThisApplication.ActiveDocument
+        Dim tr As Transaction = ThisApplication.TransactionManager.StartTransaction(dwgDoc, "Align Drawing Views")
+        Try
+            Dim viewState As viewstate = Nothing
+            ActiveSht = dwgDoc.ActiveSheet
+            oDrawingViews = ActiveSht.DrawingViews
+
+            'capture initialview states to re-enable them later.
+            For Each dwgView As DrawingView In odrawingviews
+                viewState = New viewstate
+                viewState.View = dwgView
+                'viewstate.curves = dwgview.drawingcurves
+                viewState.viewenabled = dwgView.Suppressed
+                viewstatelist.add(viewState)
+            Next
+            log.Debug("captured viewstates")
+            Dim selectedDrawingView1 As DrawingView = ThisApplication.CommandManager.Pick(SelectionFilterEnum.kDrawingViewFilter, "Select a drawing view.")
+            'turn off other competing views
+            SetViewVisibility(selectedDrawingView1, False)
+            Dim selectedCurve1 As DrawingCurveSegment = ThisApplication.CommandManager.Pick(SelectionFilterEnum.kDrawingCurveSegmentFilter, "Select a point within the chosen view.")
+            'turn all drawing views on
+            SetViewVisibility(Nothing, True)
+            Dim selectedDrawingView2 As DrawingView = ThisApplication.CommandManager.Pick(SelectionFilterEnum.kDrawingViewFilter, "Select a drawing view.")
+            'turn off other competing views
+            SetViewVisibility(selectedDrawingView2, False)
+            Dim selectedCurve2 As DrawingCurveSegment = ThisApplication.CommandManager.Pick(SelectionFilterEnum.kDrawingCurveSegmentFilter, "Select a point within the chosen view.")
+
+            SetViewVisibility(Nothing, True)
+
+            'do some more fancy stuff here such as: 
+            'display start /end points
+            'snap selected points together
+
+            Dim pointToSnap1 As Point2d = DisplayEndPoints(selectedDrawingView1, selectedCurve1)
+
+            Dim pointToSnap2 As Point2d = DisplayEndPoints(selectedDrawingView2, selectedCurve2)
+
+
+
+            'not required:
+            'Dim highlight1 As HighlightSet = ThisApplication.ActiveDocument.CreateHighlightSet
+            'highlight1.AddItem(selectedCurve1.StartPoint)
+            'highlight1.AddItem(selectedCurve1.EndPoint)
+
+            Dim tmpPoint As Point2d = selectedDrawingView2.Position 'ThisApplication.TransientGeometry.CreatePoint2d(pointToSnap1.X, pointToSnap1.Y)
+            'Dim dwgViewMatrix As Matrix = selectedDrawingView2.DrawingViewToSheetTransform
+            'assume that view 2 is the one we are moving
+            Dim VectorX As Double = pointToSnap1.X - pointToSnap2.X
+            Dim VectorY As Double = pointToSnap1.Y - pointToSnap2.Y
+            'dwgViewMatrix.SetTranslation(ThisApplication.TransientGeometry.CreateVector2d(VectorX, VectorY))
+            Dim newVector As Vector2d = ThisApplication.TransientGeometry.CreateVector2d(VectorX, VectorY)
+            tmpPoint.TranslateBy(newVector)
+            selectedDrawingView2.Position = tmpPoint
+
+
+        Catch ex As Exception
+            tr.Abort()
+            log.Error(ex.Message, ex)
+            'reset views
+            SetViewVisibility(Nothing, True)
+        Finally
+            tr.End()
+        End Try
+    End Sub
+
+    Private Function DisplayEndPoints(selectedDrawingView As DrawingView, selectedCurve As DrawingCurveSegment) As Point2d
+        Dim curve As DrawingCurve = selectedCurve.Parent
+        Dim transgeom As TransientGeometry = ThisApplication.TransientGeometry
+        Dim clientgraphics1 As ClientGraphics = Nothing
+        Try
+            clientgraphics1 = selectedDrawingView.ClientGraphicsCollection("selectedlineView1")
+        Catch ex As Exception
+            clientgraphics1 = selectedDrawingView.ClientGraphicsCollection.Add("selectedlineView1")
+        End Try
+
+        Dim gfxnode1 As GraphicsNode = clientgraphics1.AddNode(1)
+        Dim endtxtgfx As TextGraphics = gfxnode1.AddTextGraphics()
+        endtxtgfx.Text = "End point"
+        endtxtgfx.Anchor = transgeom.CreatePoint(selectedCurve.EndPoint.X, selectedCurve.EndPoint.Y, 0)
+
+        Dim starttxtgfx As TextGraphics = gfxnode1.AddTextGraphics()
+        starttxtgfx.Text = "Start Point"
+        starttxtgfx.Anchor = transgeom.CreatePoint(selectedCurve.StartPoint.X, selectedCurve.StartPoint.Y, 0)
+
+        ThisApplication.ActiveView.Update()
+
+        Dim result As String = InputBox("Which point?", "1 is start; 2 is end", "1")
+        If result = "1" Then
+            Return selectedCurve.StartPoint
+        ElseIf result = "2" Then
+            Return selectedCurve.EndPoint
+        End If
+    End Function
+
+    Public Sub SetViewVisibility(viewToKeepVisible As DrawingView, Optional viewVis As Boolean = False)
+        'log.Debug("made it to SetViewVisibility")
+        Try
+            If Not viewToKeepVisible Is Nothing Then
+                'MessageBox.Show("view: " & viewToKeepVisible.Name)
+                For Each view As DrawingView In oDrawingViews
+                    'MessageBox.Show("view: " & view.Name)
+                    If Not view Is viewToKeepVisible Then
+                        view.Suppressed = True
+                        For Each curve As DrawingCurve In view.DrawingCurves
+                            view.SetVisibility(curve, viewVis)
+                        Next
+                    End If
+                Next
+            End If
+            'restore original settings:
+            If viewVis = True And viewToKeepVisible Is Nothing Then
+                For Each view As DrawingView In oDrawingViews
+                    Dim viewtorestore As viewstate = (From a As viewstate In viewStateList
+                                                      Where a.view Is view
+                                                      Select a).FirstOrDefault()
+                    If Not viewtorestore Is Nothing Then
+                        view.Suppressed = viewtorestore.viewEnabled
+                    End If
+                Next
+            End If
+        Catch ex As Exception
+            log.Error(ex.Message, ex)
+        End Try
+    End Sub
+
+#End Region
 #Region "Check iFactory for errors"
     Public Sub CheckiPartTableForErrors()
         Dim oErrorManager As ErrorManager = ThisApplication.ErrorManager
@@ -533,7 +689,11 @@ End Class
 
 #Region "Helper classes"
 
-
+Public Class viewstate
+    Public viewEnabled As Boolean
+    Public view As DrawingView
+    'Public curves as DrawingCurvesEnumerator
+End Class
 
 Public Class iProperties
 
