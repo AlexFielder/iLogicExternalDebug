@@ -21,4 +21,24 @@ Public Class BomRowItem
             m_occurrence = value
         End Set
     End Property
+
+    Private m_Material As String
+    Public Property Material() As String
+        Get
+            Return m_Material
+        End Get
+        Set(ByVal value As String)
+            m_Material = value
+        End Set
+    End Property
+
+    Private m_Quantity As Integer
+    Public Property Quantity() As Integer
+        Get
+            Return m_Quantity
+        End Get
+        Set(ByVal value As Integer)
+            m_Quantity = value
+        End Set
+    End Property
 End Class
