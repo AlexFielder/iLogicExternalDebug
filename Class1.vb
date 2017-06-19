@@ -476,56 +476,56 @@ Public Class ExtClass
                 Dim tmpBomRowItems As List(Of BomRowItem) = New List(Of BomRowItem)
 
 
-                'this looks correct but will only give us one occurrence of each component.
-                For Each ccPart As Document In ccPartsList
-                    For Each subAssy As AssemblyDocument In AssySubAssemblies
-                        Dim assyCompDef As AssemblyComponentDefinition = subAssy.ComponentDefinition
-                        Dim structuredBomView As BOMView = assyCompDef.BOM.BOMViews.Item("Structured")
-                        Dim ccPartBomRow As BOMRow = (From row As BOMRow In structuredBomView.BOMRows
-                                                      Let RowCompDef As ComponentDefinition = row.ComponentDefinitions(1)
-                                                      Let thisDoc As Document = RowCompDef.Document
-                                                      Where thisDoc.FullFileName = ccPart.FullFileName
-                                                      Select row).FirstOrDefault()
-                        If Not ccPartBomRow Is Nothing Then
-                            Dim tmpitem As New BomRowItem() With {
-                            .Document = ccPartBomRow.ComponentDefinitions(1).Document.FullFileName,
-                            .ItemNo = ccPartBomRow.ItemNumber,
-                            .Material = iProperties.GetorSetStandardiProperty(
-                            ccPartBomRow.ComponentDefinitions(1).Document,
-                            PropertiesForDesignTrackingPropertiesEnum.kMaterialDesignTrackingProperties, "", ""),
-                            .Quantity = ccPartBomRow.TotalQuantity}
-                            tmpBomRowItems.Add(tmpitem)
-                        End If
-                    Next
-                Next
-
-                Dim tmpoccurrenceslist As List(Of BomRowItem) = processSubAssys(AssyDef)
-
-                'Dim tmpoccurrenceslist As List(Of BomRowItem) = New List(Of BomRowItem)
-
-                'For Each ccpart As Document In ccPartsList
-                '    For Each occ As ComponentOccurrence In AssyDef.Occurrences
-                '        Dim occDoc As Document = occ.Definition.Document
-                '        If occDoc Is ccpart Then
-                '            Dim tmpOccItem As New BomRowItem() With {
-                '                .Document = occDoc.FullFileName,
-                '                .ItemNo = 0,
-                '                .Material = iProperties.GetorSetStandardiProperty(occDoc, PropertiesForDesignTrackingPropertiesEnum.kMaterialDesignTrackingProperties, "", ""),
-                '                .Quantity = 1}
-                '            tmpoccurrenceslist.Add(tmpOccItem)
-                '        ElseIf occ.SubOccurrences.Count > 0 Then
-
+                ''this looks correct but will only give us one occurrence of each component.
+                'For Each ccPart As Document In ccPartsList
+                '    For Each subAssy As AssemblyDocument In AssySubAssemblies
+                '        Dim assyCompDef As AssemblyComponentDefinition = subAssy.ComponentDefinition
+                '        Dim structuredBomView As BOMView = assyCompDef.BOM.BOMViews.Item("Structured")
+                '        Dim ccPartBomRow As BOMRow = (From row As BOMRow In structuredBomView.BOMRows
+                '                                      Let RowCompDef As ComponentDefinition = row.ComponentDefinitions(1)
+                '                                      Let thisDoc As Document = RowCompDef.Document
+                '                                      Where thisDoc.FullFileName = ccPart.FullFileName
+                '                                      Select row).FirstOrDefault()
+                '        If Not ccPartBomRow Is Nothing Then
+                '            Dim tmpitem As New BomRowItem() With {
+                '            .Document = ccPartBomRow.ComponentDefinitions(1).Document.FullFileName,
+                '            .ItemNo = ccPartBomRow.ItemNumber,
+                '            .Material = iProperties.GetorSetStandardiProperty(
+                '            ccPartBomRow.ComponentDefinitions(1).Document,
+                '            PropertiesForDesignTrackingPropertiesEnum.kMaterialDesignTrackingProperties, "", ""),
+                '            .Quantity = ccPartBomRow.TotalQuantity}
+                '            tmpBomRowItems.Add(tmpitem)
                 '        End If
                 '    Next
                 'Next
 
-                Dim tmpPartsList = (From ccitem As Document In itemisedPartsList
-                                    Where ccitem.FullFileName.Contains("Content Center")
-                                    Let foldername As String = IO.Path.GetDirectoryName(ccitem.FullFileName)
-                                    Order By foldername Ascending
-                                    Select ccitem).ToList()
+                'Dim tmpoccurrenceslist As List(Of BomRowItem) = processSubAssys(AssyDef)
 
-                ccQuantityList = tmpPartsList.GroupBy(Function(x) x).Where(Function(x) x.Count > 1).Select(Function(x) x.Key).ToList()
+                ''Dim tmpoccurrenceslist As List(Of BomRowItem) = New List(Of BomRowItem)
+
+                ''For Each ccpart As Document In ccPartsList
+                ''    For Each occ As ComponentOccurrence In AssyDef.Occurrences
+                ''        Dim occDoc As Document = occ.Definition.Document
+                ''        If occDoc Is ccpart Then
+                ''            Dim tmpOccItem As New BomRowItem() With {
+                ''                .Document = occDoc.FullFileName,
+                ''                .ItemNo = 0,
+                ''                .Material = iProperties.GetorSetStandardiProperty(occDoc, PropertiesForDesignTrackingPropertiesEnum.kMaterialDesignTrackingProperties, "", ""),
+                ''                .Quantity = 1}
+                ''            tmpoccurrenceslist.Add(tmpOccItem)
+                ''        ElseIf occ.SubOccurrences.Count > 0 Then
+
+                ''        End If
+                ''    Next
+                ''Next
+
+                'Dim tmpPartsList = (From ccitem As Document In itemisedPartsList
+                '                    Where ccitem.FullFileName.Contains("Content Center")
+                '                    Let foldername As String = IO.Path.GetDirectoryName(ccitem.FullFileName)
+                '                    Order By foldername Ascending
+                '                    Select ccitem).ToList()
+
+                'ccQuantityList = tmpPartsList.GroupBy(Function(x) x).Where(Function(x) x.Count > 1).Select(Function(x) x.Key).ToList()
 
                 If Not ccPartsList Is Nothing Then
                     If ccBomRowItems Is Nothing Then
@@ -568,61 +568,61 @@ Public Class ExtClass
         End Try
     End Sub
 
-    Private Function processSubAssys(assyDef As AssemblyComponentDefinition) As List(Of BomRowItem)
-        Dim tmplist As List(Of BomRowItem) = New List(Of BomRowItem)
-        Try
+    'Private Function processSubAssys(assyDef As AssemblyComponentDefinition) As List(Of BomRowItem)
+    '    Dim tmplist As List(Of BomRowItem) = New List(Of BomRowItem)
+    '    Try
 
-            'Dim listofThisPart As List(Of Document) = (From thisocc As ComponentOccurrence In assyDef.Occurrences
-            '                                           Let thispartDoc As Document = thisocc.Definition.Document
-            '                                           Where thispartDoc Is ccpart
-            '                                           Select thispartDoc).ToList()
+    '        'Dim listofThisPart As List(Of Document) = (From thisocc As ComponentOccurrence In assyDef.Occurrences
+    '        '                                           Let thispartDoc As Document = thisocc.Definition.Document
+    '        '                                           Where thispartDoc Is ccpart
+    '        '                                           Select thispartDoc).ToList()
 
-            For Each occ As ComponentOccurrence In assyDef.Occurrences
-                If occ.SubOccurrences.Count > 0 Then
-                    Dim occDoc As Document = occ.Definition.Document
-                    Dim subAssyDef As AssemblyComponentDefinition = occ.Definition
-                    tmplist.AddRange(processSubAssys(subAssyDef))
-                Else
-                    Dim listofPartsInThisAssembly As List(Of Document) = New List(Of Document)
-                    For Each ccpart As Document In ccPartsList
-                        Dim tmpCompDef As ComponentDefinition = occ.Definition
-                        Dim thisDoc As Document = tmpCompDef.Document
-                        If TypeOf (thisDoc) Is PartDocument Then
-                            If thisDoc Is ccpart Then
-                                listofPartsInThisAssembly.Add(thisDoc)
-                            End If
-                        End If
-                    Next
-                    Dim groupedbyFilename = listofPartsInThisAssembly.OrderBy(Function(a As Document) a.FullFileName).GroupBy(Function(x As Document) x.FullFileName)
-                    For Each partgroup As Object In groupedbyFilename
-                        For Each item As Document In partgroup
-                            Dim tmpOccItem As New BomRowItem() With {
-                                    .Document = item.FullFileName,
-                                    .ItemNo = 0,
-                                    .Material = iProperties.GetorSetStandardiProperty(item, PropertiesForDesignTrackingPropertiesEnum.kMaterialDesignTrackingProperties, "", ""),
-                                    .Quantity = partgroup.Count}
-                            tmplist.Add(tmpOccItem)
-                        Next
-                    Next
-                    'If listofThisPart.Count > 0 Then
-                    '    Dim tmpOccItem As New BomRowItem() With {
-                    '                .Document = ccpart.FullFileName,
-                    '                .ItemNo = 0,
-                    '                .Material = iProperties.GetorSetStandardiProperty(ccpart, PropertiesForDesignTrackingPropertiesEnum.kMaterialDesignTrackingProperties, "", ""),
-                    '                .Quantity = listofThisPart.Count}
-                    '    tmplist.Add(tmpOccItem)
-                    'End If
-                End If
-            Next
-            'If Not listofThisPart Is Nothing And listofThisPart.Count > 0 Then
+    '        For Each occ As ComponentOccurrence In assyDef.Occurrences
+    '            If occ.SubOccurrences.Count > 0 Then
+    '                Dim occDoc As Document = occ.Definition.Document
+    '                Dim subAssyDef As AssemblyComponentDefinition = occ.Definition
+    '                tmplist.AddRange(processSubAssys(subAssyDef))
+    '            Else
+    '                Dim listofPartsInThisAssembly As List(Of Document) = New List(Of Document)
+    '                For Each ccpart As Document In ccPartsList
+    '                    Dim tmpCompDef As ComponentDefinition = occ.Definition
+    '                    Dim thisDoc As Document = tmpCompDef.Document
+    '                    If TypeOf (thisDoc) Is PartDocument Then
+    '                        If thisDoc Is ccpart Then
+    '                            listofPartsInThisAssembly.Add(thisDoc)
+    '                        End If
+    '                    End If
+    '                Next
+    '                Dim groupedbyFilename = listofPartsInThisAssembly.OrderBy(Function(a As Document) a.FullFileName).GroupBy(Function(x As Document) x.FullFileName)
+    '                For Each partgroup As Object In groupedbyFilename
+    '                    For Each item As Document In partgroup
+    '                        Dim tmpOccItem As New BomRowItem() With {
+    '                                .Document = item.FullFileName,
+    '                                .ItemNo = 0,
+    '                                .Material = iProperties.GetorSetStandardiProperty(item, PropertiesForDesignTrackingPropertiesEnum.kMaterialDesignTrackingProperties, "", ""),
+    '                                .Quantity = partgroup.Count}
+    '                        tmplist.Add(tmpOccItem)
+    '                    Next
+    '                Next
+    '                'If listofThisPart.Count > 0 Then
+    '                '    Dim tmpOccItem As New BomRowItem() With {
+    '                '                .Document = ccpart.FullFileName,
+    '                '                .ItemNo = 0,
+    '                '                .Material = iProperties.GetorSetStandardiProperty(ccpart, PropertiesForDesignTrackingPropertiesEnum.kMaterialDesignTrackingProperties, "", ""),
+    '                '                .Quantity = listofThisPart.Count}
+    '                '    tmplist.Add(tmpOccItem)
+    '                'End If
+    '            End If
+    '        Next
+    '        'If Not listofThisPart Is Nothing And listofThisPart.Count > 0 Then
 
 
-            Return tmplist
-        Catch ex As Exception
-            log.Error(ex.Message, ex)
-            Return tmplist
-        End Try
-    End Function
+    '        Return tmplist
+    '    Catch ex As Exception
+    '        log.Error(ex.Message, ex)
+    '        Return tmplist
+    '    End Try
+    'End Function
 
     Private Sub ConvertBomRowItemsToAttributes()
         Dim standardCCPartAttSet As AttributeSet = Nothing
