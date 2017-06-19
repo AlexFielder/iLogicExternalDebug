@@ -33,10 +33,6 @@ Public Class ExtClass
     Public Shared dwgDoc As DrawingDocument = Nothing
     Public ActiveSht As Sheet = Nothing
     Public oDrawingViews As DrawingViews = Nothing
-    'footwalks
-    Public AssyDoc As AssemblyDocument
-    Public AssyDef As AssemblyComponentDefinition
-
 
     ''' <summary>
     ''' the Inventor object populated by m_inventorApplication
@@ -63,83 +59,6 @@ Public Class ExtClass
             m_DocToUpdate = value
         End Set
     End Property
-
-#Region "Patterning Footwalks"
-    '''Needs to use Module_Pattern_QTY for driving the number, Module_Spacing for the distance between
-    ''' and the Z axis for direction.
-    '''
-    Public Sub PatternFootWalk(OccName As String, NumOccs As Integer, OffsetDistance As Double, PatternName As String, FolderName As String)
-        Dim CompOccs As ComponentOccurrences = AssyDef.Occurrences
-        Dim newPatternOcc As RectangularOccurrencePattern
-        Dim compOcc As ComponentOccurrence = CompOccs.ItemByName(OccName)
-        Dim objCol As ObjectCollection = ThisApplication.TransientObjects.CreateObjectCollection
-
-        'base work axes - don't need all three but useful to demonstrate
-        Dim XAxis As WorkAxis
-        Dim YAxis As WorkAxis
-        Dim Zaxis As WorkAxis
-        With AssyDef
-            XAxis = .WorkAxes(1)
-            YAxis = .WorkAxes(2)
-            Zaxis = .WorkAxes(3)
-        End With
-
-        objCol.Add(compOcc)
-        newPatternOcc = AssyDef.OccurrencePatterns.AddRectangularPattern(objCol,
-                                                                        Zaxis,
-                                                                        False,
-                                                                        OffsetDistance / 10,
-                                                                        NumOccs)
-        newPatternOcc.Name = PatternName
-
-        'AddNewPatternToFolder(FolderName, newPatternOcc)
-        '	Component.IsActive("Footwalk Inter RH Pattern") = False
-        '	Component.IsActive("Footwalk Inter LH Pattern") = False
-
-    End Sub
-
-    Sub AddNewPatternToFolder(Foldername As String, occ As RectangularOccurrencePattern)
-        ' get the model browser pane
-        Dim oPane As BrowserPane
-        oPane = assyDoc.BrowserPanes.Item("Model")
-
-        ' Create a Browser node object from an existing object
-        Dim oNode As BrowserNode
-        oNode = oPane.GetBrowserNodeFromObject(occ)
-
-
-
-        ' Add the node to the extra folder
-        Dim browserFolder As BrowserFolder = (From a As BrowserFolder In oPane.TopNode.BrowserFolders
-                                              Where a.Name = Foldername
-                                              Select a).FirstOrDefault()
-        Dim maleNode As BrowserNode = (From node As BrowserNode In browserFolder.BrowserNode.BrowserNodes
-                                       Where node.BrowserNodeDefinition.Label.StartsWith("Footwalk Male")
-                                       Select node).FirstOrDefault()
-        'browserFolder.Add(oNode, maleNode, False)
-        'doesn't f*$£ing work!
-        'oPane.TopNode.BrowserFolders.Item(Foldername).Add(oNode)
-    End Sub
-
-    Public Sub ActuallyDeletePattern(PatternName As String)
-        '	Try
-        Dim CompOccs As ComponentOccurrences = AssyDef.Occurrences
-        'Dim PatternOccToDelete As RectangularOccurrencePattern = CompOccs.ItemByName(PatternName)
-        ' Dim PatternOccToDelete As ComponentOccurrence = CompOccs.ItemByName(PatternName)
-
-        ' get the model browser pane
-        Dim oPane As BrowserPane
-        oPane = AssyDoc.BrowserPanes.Item("Model")
-        Dim nodeTodelete As BrowserNode = (From node As BrowserNode In oPane.TopNode.BrowserNodes
-                                           Where node.BrowserNodeDefinition.Label = PatternName
-                                           Select node).FirstOrDefault()
-        If Not nodeTodelete Is Nothing Then
-            Dim PatternOccToDelete As RectangularOccurrencePattern = nodeTodelete.NativeObject
-            PatternOccToDelete.Delete()
-        End If
-    End Sub
-
-#End Region
 
 #Region "Align drawing views"
 
