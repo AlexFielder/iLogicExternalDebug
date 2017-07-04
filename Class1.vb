@@ -36,6 +36,7 @@ Public Class ExtClass
     'footwalks
     Public AssyDoc As AssemblyDocument
     Public AssyDef As AssemblyComponentDefinition
+    Public BOMLevels As Boolean = True
 
 
     ''' <summary>
@@ -653,7 +654,7 @@ Public Class ExtClass
             'Dim AssySubAssemblies As List(Of AssemblyDocument) = Nothing
             Dim oCompDef As Inventor.ComponentDefinition = oDoc.ComponentDefinition
             'process this assembly
-            RenumberBomViews(oDoc.ComponentDefinition)
+            RenumberBomViews(oDoc.ComponentDefinition, BOMLevels)
             ' Get all referenced assemblies in one list
             AssySubAssemblies = (From assyDoc As Document In oDoc.AllReferencedDocuments
                                  Where TypeOf (assyDoc) Is AssemblyDocument
@@ -662,14 +663,14 @@ Public Class ExtClass
                                  Select selectedDoc).ToList()
             For Each assy As Document In AssySubAssemblies
                 Dim ThisAssy As AssemblyDocument = assy
-                RenumberBomViews(ThisAssy.ComponentDefinition)
+                RenumberBomViews(ThisAssy.ComponentDefinition, True)
             Next
         Catch ex As Exception
             log.Error(ex.Message, ex)
         End Try
     End Sub
 
-    Private Sub RenumberBomViews(parentAssyCompDef As AssemblyComponentDefinition)
+    Private Sub RenumberBomViews(parentAssyCompDef As AssemblyComponentDefinition, BOMLevels As Boolean)
         Try
             Dim AssyBom As BOM = parentAssyCompDef.BOM
             Dim ParentAssyDoc As AssemblyDocument = parentAssyCompDef.Document
@@ -677,20 +678,29 @@ Public Class ExtClass
                 log.Info("structured bom view disabled: " & ParentAssyDoc.FullFileName)
             Else
                 updatestatusbar("Processing: " & ParentAssyDoc.FullFileName)
-                AssyBom.StructuredViewFirstLevelOnly = True
+                'this should only be true for the sub-assemblies
+                If BOMLevels = False Then
+                    AssyBom.StructuredViewFirstLevelOnly = BOMLevels
+                Else
+                    AssyBom.StructuredViewFirstLevelOnly = BOMLevels
+                End If
+
+
                 Dim ThisAssyBOMView As BOMView = AssyBom.BOMViews.Item("Structured")
-                RenumberBOMViewRows(ParentAssyDoc, ThisAssyBOMView)
+                RenumberBOMViewRows(ParentAssyDoc, ThisAssyBOMView.BOMRows)
+                ThisAssyBOMView.Sort("Item", True)
                 ThisAssyBOMView = AssyBom.BOMViews.Item("Parts Only")
-                RenumberBOMViewRows(ParentAssyDoc, ThisAssyBOMView)
+                RenumberBOMViewRows(ParentAssyDoc, ThisAssyBOMView.BOMRows)
+                ThisAssyBOMView.Sort("Item", True)
             End If
         Catch ex As Exception
             log.Error(ex.Message, ex)
         End Try
     End Sub
 
-    Public Sub RenumberBOMViewRows(ParentAssyDoc As Document, currentView As BOMView)
+    Public Sub RenumberBOMViewRows(ParentAssyDoc As Document, BOMRows As BOMRowsEnumerator)
         Try
-            For Each row As BOMRow In currentView.BOMRows
+            For Each row As BOMRow In BOMRows
                 Dim RowCompDef As ComponentDefinition = row.ComponentDefinitions(1)
                 Dim thisDoc As Document = RowCompDef.Document
                 If row.Promoted Then
@@ -699,6 +709,9 @@ Public Class ExtClass
                 Dim matchingStoredDocument As BomRowItem = (From m As BomRowItem In ccBomRowItems
                                                             Where m.Document = thisDoc.FullFileName
                                                             Select m).FirstOrDefault()
+                If Not row.ChildRows Is Nothing Then
+                    RenumberBOMViewRows(thisDoc, row.ChildRows)
+                End If
                 If Not matchingStoredDocument Is Nothing Then
                     log.Info("Assembly: " & IO.Path.GetFileName(ParentAssyDoc.FullFileName) &
                              " | Part: " & IO.Path.GetFileName(thisDoc.FullFileName) &
@@ -727,7 +740,7 @@ Public Class ExtClass
                 End If
 
             Next
-            currentView.Sort("Item", True)
+            'BOMRows.Sort("Item", True)
         Catch ex As Exception
             log.Error(ex.Message, ex)
         End Try
@@ -1081,7 +1094,11 @@ Public Class iProperties
                     End If
                 End If
             Else
-                customproperty = prop.Value
+                If Not prop Is Nothing Then
+                    customproperty = prop.Value
+                Else
+                    customproperty = ""
+                End If
             End If
         Catch ex As Exception
             Log.Error(ex.Message, ex)
