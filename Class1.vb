@@ -477,57 +477,6 @@ Public Class ExtClass
                 Dim tmpBomRowItems As List(Of BomRowItem) = New List(Of BomRowItem)
 
 
-                ''this looks correct but will only give us one occurrence of each component.
-                'For Each ccPart As Document In ccPartsList
-                '    For Each subAssy As AssemblyDocument In AssySubAssemblies
-                '        Dim assyCompDef As AssemblyComponentDefinition = subAssy.ComponentDefinition
-                '        Dim structuredBomView As BOMView = assyCompDef.BOM.BOMViews.Item("Structured")
-                '        Dim ccPartBomRow As BOMRow = (From row As BOMRow In structuredBomView.BOMRows
-                '                                      Let RowCompDef As ComponentDefinition = row.ComponentDefinitions(1)
-                '                                      Let thisDoc As Document = RowCompDef.Document
-                '                                      Where thisDoc.FullFileName = ccPart.FullFileName
-                '                                      Select row).FirstOrDefault()
-                '        If Not ccPartBomRow Is Nothing Then
-                '            Dim tmpitem As New BomRowItem() With {
-                '            .Document = ccPartBomRow.ComponentDefinitions(1).Document.FullFileName,
-                '            .ItemNo = ccPartBomRow.ItemNumber,
-                '            .Material = iProperties.GetorSetStandardiProperty(
-                '            ccPartBomRow.ComponentDefinitions(1).Document,
-                '            PropertiesForDesignTrackingPropertiesEnum.kMaterialDesignTrackingProperties, "", ""),
-                '            .Quantity = ccPartBomRow.TotalQuantity}
-                '            tmpBomRowItems.Add(tmpitem)
-                '        End If
-                '    Next
-                'Next
-
-                'Dim tmpoccurrenceslist As List(Of BomRowItem) = processSubAssys(AssyDef)
-
-                ''Dim tmpoccurrenceslist As List(Of BomRowItem) = New List(Of BomRowItem)
-
-                ''For Each ccpart As Document In ccPartsList
-                ''    For Each occ As ComponentOccurrence In AssyDef.Occurrences
-                ''        Dim occDoc As Document = occ.Definition.Document
-                ''        If occDoc Is ccpart Then
-                ''            Dim tmpOccItem As New BomRowItem() With {
-                ''                .Document = occDoc.FullFileName,
-                ''                .ItemNo = 0,
-                ''                .Material = iProperties.GetorSetStandardiProperty(occDoc, PropertiesForDesignTrackingPropertiesEnum.kMaterialDesignTrackingProperties, "", ""),
-                ''                .Quantity = 1}
-                ''            tmpoccurrenceslist.Add(tmpOccItem)
-                ''        ElseIf occ.SubOccurrences.Count > 0 Then
-
-                ''        End If
-                ''    Next
-                ''Next
-
-                'Dim tmpPartsList = (From ccitem As Document In itemisedPartsList
-                '                    Where ccitem.FullFileName.Contains("Content Center")
-                '                    Let foldername As String = IO.Path.GetDirectoryName(ccitem.FullFileName)
-                '                    Order By foldername Ascending
-                '                    Select ccitem).ToList()
-
-                'ccQuantityList = tmpPartsList.GroupBy(Function(x) x).Where(Function(x) x.Count > 1).Select(Function(x) x.Key).ToList()
-
                 If Not ccPartsList Is Nothing Then
                     If ccBomRowItems Is Nothing Then
                         ccBomRowItems = New List(Of BomRowItem)
@@ -569,61 +518,6 @@ Public Class ExtClass
         End Try
     End Sub
 
-    'Private Function processSubAssys(assyDef As AssemblyComponentDefinition) As List(Of BomRowItem)
-    '    Dim tmplist As List(Of BomRowItem) = New List(Of BomRowItem)
-    '    Try
-
-    '        'Dim listofThisPart As List(Of Document) = (From thisocc As ComponentOccurrence In assyDef.Occurrences
-    '        '                                           Let thispartDoc As Document = thisocc.Definition.Document
-    '        '                                           Where thispartDoc Is ccpart
-    '        '                                           Select thispartDoc).ToList()
-
-    '        For Each occ As ComponentOccurrence In assyDef.Occurrences
-    '            If occ.SubOccurrences.Count > 0 Then
-    '                Dim occDoc As Document = occ.Definition.Document
-    '                Dim subAssyDef As AssemblyComponentDefinition = occ.Definition
-    '                tmplist.AddRange(processSubAssys(subAssyDef))
-    '            Else
-    '                Dim listofPartsInThisAssembly As List(Of Document) = New List(Of Document)
-    '                For Each ccpart As Document In ccPartsList
-    '                    Dim tmpCompDef As ComponentDefinition = occ.Definition
-    '                    Dim thisDoc As Document = tmpCompDef.Document
-    '                    If TypeOf (thisDoc) Is PartDocument Then
-    '                        If thisDoc Is ccpart Then
-    '                            listofPartsInThisAssembly.Add(thisDoc)
-    '                        End If
-    '                    End If
-    '                Next
-    '                Dim groupedbyFilename = listofPartsInThisAssembly.OrderBy(Function(a As Document) a.FullFileName).GroupBy(Function(x As Document) x.FullFileName)
-    '                For Each partgroup As Object In groupedbyFilename
-    '                    For Each item As Document In partgroup
-    '                        Dim tmpOccItem As New BomRowItem() With {
-    '                                .Document = item.FullFileName,
-    '                                .ItemNo = 0,
-    '                                .Material = iProperties.GetorSetStandardiProperty(item, PropertiesForDesignTrackingPropertiesEnum.kMaterialDesignTrackingProperties, "", ""),
-    '                                .Quantity = partgroup.Count}
-    '                        tmplist.Add(tmpOccItem)
-    '                    Next
-    '                Next
-    '                'If listofThisPart.Count > 0 Then
-    '                '    Dim tmpOccItem As New BomRowItem() With {
-    '                '                .Document = ccpart.FullFileName,
-    '                '                .ItemNo = 0,
-    '                '                .Material = iProperties.GetorSetStandardiProperty(ccpart, PropertiesForDesignTrackingPropertiesEnum.kMaterialDesignTrackingProperties, "", ""),
-    '                '                .Quantity = listofThisPart.Count}
-    '                '    tmplist.Add(tmpOccItem)
-    '                'End If
-    '            End If
-    '        Next
-    '        'If Not listofThisPart Is Nothing And listofThisPart.Count > 0 Then
-
-
-    '        Return tmplist
-    '    Catch ex As Exception
-    '        log.Error(ex.Message, ex)
-    '        Return tmplist
-    '    End Try
-    'End Function
 
     Private Sub ConvertBomRowItemsToAttributes()
         Dim standardCCPartAttSet As AttributeSet = Nothing
@@ -647,6 +541,7 @@ Public Class ExtClass
             'Dim standardCCPart As AttributeSet = standardCCPartAttSet.AddAttributes(attributenames, valueTypes, attributeValues, False)
         Next
     End Sub
+
 
     Public Sub ProcessAllAssemblyOccurrences()
         Try
@@ -689,6 +584,10 @@ Public Class ExtClass
                 Dim ThisAssyBOMView As BOMView = AssyBom.BOMViews.Item("Structured")
                 RenumberBOMViewRows(ParentAssyDoc, ThisAssyBOMView.BOMRows)
                 ThisAssyBOMView.Sort("Item", True)
+                Dim ParentFolder As String = IO.Path.GetDirectoryName(IO.Path.GetFileName(ParentAssyDoc.FullFileName))
+                Dim ExportedBOMFolder As String = IO.Path.Combine(ParentFolder, "04 Exported BOMs")
+                Dim ExportedBOMFileName As String = IO.Path.Combine(ExportedBOMFolder, IO.Path.GetFileNameWithoutExtension(ParentAssyDoc.FullFileName) + ".xlsx")
+                ThisAssyBOMView.Export(ExportedBOMFileName, FileFormatEnum.kMicrosoftExcelFormat)
                 ThisAssyBOMView = AssyBom.BOMViews.Item("Parts Only")
                 RenumberBOMViewRows(ParentAssyDoc, ThisAssyBOMView.BOMRows)
                 ThisAssyBOMView.Sort("Item", True)
@@ -722,14 +621,35 @@ Public Class ExtClass
                 Else
                     'assumes we used 6 digits for our COTS numbering!
                     If IO.Path.GetFileNameWithoutExtension(thisDoc.FullFileName).StartsWith("COTS") Then
+                        ' because reasons we need to check whether the part number matches the filename and if not, the 
+                        ' part number should take precedence!
                         Dim COTSnumber As String = IO.Path.GetFileNameWithoutExtension(thisDoc.FullFileName)
+                        Dim partnumber As String = iProperties.GetorSetStandardiProperty(thisDoc, PropertiesForDesignTrackingPropertiesEnum.kPartNumberDesignTrackingProperties, "", "")
+                        If Not COTSnumber = partnumber Then
+                            COTSnumber = partnumber
+                        End If
                         Dim COTSBase As Double = 0
-                        Dim regex As New Regex("(\d{6})")
+                        Dim regex As New Regex("(\d{6}\w.*)|(\d{6})")
                         Dim f As String = String.Empty
                         f = regex.Match(COTSnumber).Captures(0).ToString()
-                        COTSBase = GetRoundNum(Convert.ToDouble(f), 100000)
-                        Dim COTSNum As Double = Convert.ToDouble(f)
-                        Dim newItemNum As String = Convert.ToString(COTSNum - COTSBase)
+                        Dim doubleValue As Double
+                        Dim COTSNum As Double
+                        Dim newItemNum As String = String.Empty
+                        If Double.TryParse(f, doubleValue) Then
+                            COTSBase = GetRoundNum(doubleValue, 100000)
+                            COTSNum = Convert.ToDouble(f)
+                            newItemNum = Convert.ToString(COTSNum - COTSBase)
+                        Else
+                            Dim pattern As String = "(\d{6})(\w.*)"
+                            Dim matches As MatchCollection = Regex.Matches(f, pattern)
+
+                            Dim prefix As String = matches(0).Groups(1).ToString()
+                            Dim suffix As String = matches(0).Groups(2).ToString()
+                            COTSBase = GetRoundNum(prefix, 100000)
+                            COTSNum = Convert.ToDouble(prefix)
+                            newItemNum = Convert.ToString(COTSNum - COTSBase) + suffix
+                        End If
+
                         row.ItemNumber = newItemNum
                     Else
                         If Not iProperties.SetorCreateCustomiProperty(thisDoc, "ItemNo") = String.Empty Then
