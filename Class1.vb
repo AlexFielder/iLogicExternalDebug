@@ -567,8 +567,17 @@ Public Class ExtClass
 
     Private Sub RenumberBomViews(parentAssyCompDef As AssemblyComponentDefinition, BOMLevels As Boolean)
         Try
+
             Dim AssyBom As BOM = parentAssyCompDef.BOM
             Dim ParentAssyDoc As AssemblyDocument = parentAssyCompDef.Document
+            Dim ParentFolder As String = IO.Path.GetDirectoryName(ParentAssyDoc.FullFileName)
+            Dim ExportedBOMFolder As String = IO.Path.Combine(ParentFolder, "04 Exported BOMs")
+            Dim ExportedBOMFileName As String = IO.Path.Combine(ExportedBOMFolder, IO.Path.GetFileNameWithoutExtension(ParentAssyDoc.FullFileName) + ".xlsx")
+            'need to add the material column to the BOM. but we can't do that because reasons so we're left with having to export a style from an existing assembly
+            ' as per the suggestion here: https://forums.autodesk.com/t5/inventor-forum/ilogic-to-add-custom-iproperty-columns-to-bill-of-materials-in/m-p/6920040/highlight/true#M633706
+            Dim CustomerName As String = IO.Path.GetFileName(ParentFolder) 'taken from the parentfolder name which should *always* be the customername
+            Dim BOMCustomFile As String = IO.Path.Combine(ParentFolder, CustomerName + "_BOM_Style.xml")
+            AssyBom.ImportBOMCustomization(BOMCustomFile)
             If Not AssyBom.StructuredViewEnabled = True Then
                 log.Info("structured bom view disabled: " & ParentAssyDoc.FullFileName)
             Else
@@ -584,9 +593,9 @@ Public Class ExtClass
                 Dim ThisAssyBOMView As BOMView = AssyBom.BOMViews.Item("Structured")
                 RenumberBOMViewRows(ParentAssyDoc, ThisAssyBOMView.BOMRows)
                 ThisAssyBOMView.Sort("Item", True)
-                Dim ParentFolder As String = IO.Path.GetDirectoryName(IO.Path.GetFileName(ParentAssyDoc.FullFileName))
-                Dim ExportedBOMFolder As String = IO.Path.Combine(ParentFolder, "04 Exported BOMs")
-                Dim ExportedBOMFileName As String = IO.Path.Combine(ExportedBOMFolder, IO.Path.GetFileNameWithoutExtension(ParentAssyDoc.FullFileName) + ".xlsx")
+
+
+
                 ThisAssyBOMView.Export(ExportedBOMFileName, FileFormatEnum.kMicrosoftExcelFormat)
                 ThisAssyBOMView = AssyBom.BOMViews.Item("Parts Only")
                 RenumberBOMViewRows(ParentAssyDoc, ThisAssyBOMView.BOMRows)
