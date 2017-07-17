@@ -41,4 +41,13 @@ Public Class BomRowItem
             m_Quantity = value
         End Set
     End Property
+    Private m_WhereUsed As List(Of String)
+    Public Property WhereUsed() As List(Of String)
+        Get
+            Return m_WhereUsed
+        End Get
+        Set(ByVal value As List(Of String))
+            m_WhereUsed = value
+        End Set
+    End Property
 End Class

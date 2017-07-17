@@ -420,13 +420,19 @@ Public Class ExtClass
             For Each attSet As AttributeSet In attribSetEnum
                 Dim filename As Attribute = attSet("FileName")
                 Dim partno As Attribute = attSet("StandardPartNum")
+                'should really check this exists or it'll likely fail hard:
+                Dim whereUsed As Attribute = attSet("WhereUsed")
+                'not sure if this will work. needs testing!
+                Dim whereUsedList As List(Of String) = whereUsed.ToString.Split(",").ToList()
                 Dim existingItem As New BomRowItem() With {
                     .Document = filename.Value,
-                    .ItemNo = partno.Value}
+                    .ItemNo = partno.Value,
+                    .WhereUsed = whereUsedList}
                 ccBomRowItems.Add(existingItem)
             Next
         End If
 
+        ccBomRowItems.OrderBy(Function(o As BomRowItem) o.ItemNo)
 
         'If Not existingAttributes.Count = 0 Then
         '    ccBomRowItems = New List(Of BomRowItem)
@@ -528,11 +534,15 @@ Public Class ExtClass
                 standardCCPartAttSet = ThisApplication.ActiveDocument.AttributeSets.Item("CCPartNumberSet" & item.ItemNo.ToString())
                 'should maybe verify whether the values match what has been captured?
             Else
+                Dim csv As String = [String].Join(",", myValues.[Select](Function(x) x.ToString()).ToArray())
+                Dim whereUsed As String = String.Join("," item.WhereUsed.ToArray())
+
                 standardCCPartAttSet = ThisApplication.ActiveDocument.AttributeSets.Add("CCPartNumberSet" & item.ItemNo.ToString())
                 standardCCPartAttSet.Add("FileName", ValueTypeEnum.kStringType, item.Document)
                 standardCCPartAttSet.Add("StandardPartNum", ValueTypeEnum.kStringType, item.ItemNo.ToString)
                 standardCCPartAttSet.Add("Quantity", ValueTypeEnum.kIntegerType, item.Quantity)
                 standardCCPartAttSet.Add("Material", ValueTypeEnum.kStringType, item.Material)
+                standardCCPartAttSet.Add("WhereUsed", ValueTypeEnum.kStringType, item.WhereUsed)
             End If
             'Dim attributenames() As String = {"FileName, StandardPartNum"}
             'Dim valueTypes() As ValueTypeEnum = {ValueTypeEnum.kStringType, ValueTypeEnum.kStringType}
@@ -627,6 +637,7 @@ Public Class ExtClass
                              " to: " & matchingStoredDocument.ItemNo)
                     row.ItemNumber = matchingStoredDocument.ItemNo
                     matchingStoredDocument.Quantity = row.TotalQuantity
+                    matchingStoredDocument.WhereUsed.Add(ParentAssyDoc.FullFileName)
                 Else
                     'assumes we used 6 digits for our COTS numbering!
                     If IO.Path.GetFileNameWithoutExtension(thisDoc.FullFileName).StartsWith("COTS") Then
