@@ -534,15 +534,13 @@ Public Class ExtClass
                 standardCCPartAttSet = ThisApplication.ActiveDocument.AttributeSets.Item("CCPartNumberSet" & item.ItemNo.ToString())
                 'should maybe verify whether the values match what has been captured?
             Else
-                Dim csv As String = [String].Join(",", myValues.[Select](Function(x) x.ToString()).ToArray())
-                Dim whereUsed As String = String.Join("," item.WhereUsed.ToArray())
-
+                Dim whereUsed As String = String.Join(",", item.WhereUsed.ToArray())
                 standardCCPartAttSet = ThisApplication.ActiveDocument.AttributeSets.Add("CCPartNumberSet" & item.ItemNo.ToString())
                 standardCCPartAttSet.Add("FileName", ValueTypeEnum.kStringType, item.Document)
                 standardCCPartAttSet.Add("StandardPartNum", ValueTypeEnum.kStringType, item.ItemNo.ToString)
                 standardCCPartAttSet.Add("Quantity", ValueTypeEnum.kIntegerType, item.Quantity)
                 standardCCPartAttSet.Add("Material", ValueTypeEnum.kStringType, item.Material)
-                standardCCPartAttSet.Add("WhereUsed", ValueTypeEnum.kStringType, item.WhereUsed)
+                standardCCPartAttSet.Add("WhereUsed", ValueTypeEnum.kStringType, whereUsed)
             End If
             'Dim attributenames() As String = {"FileName, StandardPartNum"}
             'Dim valueTypes() As ValueTypeEnum = {ValueTypeEnum.kStringType, ValueTypeEnum.kStringType}
